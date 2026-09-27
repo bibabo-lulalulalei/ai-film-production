@@ -1,0 +1,112 @@
+{
+  "asset_id": "SC-入口室内",
+  "kind": "scene",
+
+  "identity": {
+    "name": "吴宅外院小斋",
+    "interior_exterior": "室内",
+    "time_of_day": "夜（约戌时）",
+    "season": "秋",
+    "weather": "晴",
+    "geography_ref": "04-world/SC-入口/geography.json",
+    "serves_shots": ["S001", "S002", "S003", "S004"]
+  },
+
+  "layout": {
+    "floor_plan": "方形小室；门在东墙(画面右侧)，桌在中部偏左，后墙一小窗",
+    "depth_layers": [
+      { "layer": "前景", "contents": "桌沿、陶杯" },
+      { "layer": "中景", "contents": "人物、桌凳" },
+      { "layer": "后景", "contents": "土墙、小窗、右侧门" }
+    ],
+    "occlusion": "人物遮挡后墙一部；桌挡地面"
+  },
+
+  "architecture": [
+    { "element": "墙", "material": "夯土，草筋", "color_hex": "#8C7D68",
+      "size_note": "层高低，显局促", "condition": "旧，局部剥落" },
+    { "element": "地面", "material": "夯土", "color_hex": "#7A6B58",
+      "condition": "压实、有裂纹" },
+    { "element": "顶/梁", "material": "暗色木梁", "color_hex": "#3A332B",
+      "condition": "烟熏发黑" },
+    { "element": "门", "material": "木板", "color_hex": "#5A4A38",
+      "condition": "旧、关合，门下留缝",
+      "opening_view": "透过门只见外院夜色，无景物" },
+    { "element": "窗", "material": "木棂纸糊", "color_hex": "#6A5C48",
+      "condition": "旧，纸微黄" }
+  ],
+
+  "furnishings": [
+    { "prop_id": "PROP-陶杯", "position": "桌面中部偏右", "screen_share": "很小" }
+  ],
+
+  "lighting": {
+    "practical_sources": [
+      { "type": "油灯", "position": "桌面左前", "color_hex": "#C98A3B",
+        "intensity": "弱，柔晕小", "flame_count": 1 }
+    ],
+    "ambient": "极弱夜天光；门缝在被召唤时透冷白一线",
+    "key_to_fill_ratio": "主光弱、辅光近无，比约 8:1，整体压暗",
+    "overall_exposure": "暗调，高光不过曝"
+  },
+
+  "palette": [
+    { "name": "纸/土黄", "hex": "#8C7D68" },
+    { "name": "灯暖", "hex": "#C98A3B" },
+    { "name": "梁暗黑", "hex": "#3A332B" },
+    { "name": "缝冷", "hex": "#BFCBD2" }
+  ],
+
+  "air": "室内静、几乎无烟尘",
+  "terrain_vegetation": "无",
+
+  "grids": [
+    {
+      "grid_id": "g1",
+      "layout": "2x2",
+      "target_path": "07-assets/scenes/SC-入口室内_g1.png",
+      "cells": [
+        {
+          "cell_id": "c1",
+          "position": "tl",
+          "view": "室内全景建立镜，朝东，坐姿肩高；35mm 浅景深",
+          "must_see": "右侧门、门缝下方地面、人物背影、桌与杯",
+          "serves_shots": ["S001"]
+        },
+        {
+          "cell_id": "c2",
+          "position": "tr",
+          "view": "门正面中景，门缝冷光横过地面",
+          "must_see": "门板、门缝一线光、下方地面",
+          "serves_shots": ["S002"]
+        },
+        {
+          "cell_id": "c3",
+          "position": "bl",
+          "view": "过桌的过肩视角，朝向后墙小窗",
+          "must_see": "后墙小窗、桌沿、陶杯",
+          "serves_shots": ["S003"]
+        },
+        {
+          "cell_id": "c4",
+          "position": "br",
+          "view": "构件特写：油灯与门轴并列",
+          "must_see": "油灯焰心、木门纹理",
+          "serves_shots": ["S004"]
+        }
+      ]
+    }
+  ],
+
+  "figures": { "contains_people": false, "scale": "空镜不含人", "who": [] },
+
+  "acceptance": {
+    "criteria": [
+      "门在画面右侧、桌在中左，与平面一致；夯土/木梁色值符合 hex",
+      "油灯暖、整体压暗，门缝冷白位置正确"
+    ],
+    "negative": [
+      "现代构件/灯具/家具、多余陈设、日光、明亮曝光、塑料质感、水印"
+    ]
+  }
+}

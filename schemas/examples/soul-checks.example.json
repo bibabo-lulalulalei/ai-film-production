@@ -1,0 +1,18 @@
+{
+  "$comment": "放在 01-novel/soul-checks.json。只列机器可客观核对的魂规则；气质/潜台词不要写这里。lint_cards --gate A 会读取本文件。",
+  "motifs": [
+    {
+      "motif_id": "MOTIF-召唤之光",
+      "min_count": 3,
+      "order": ["S001", "S002", "S010"],
+      "meaning_changes": true,
+      "description": "光须出现至少三次，按此镜序，每次意味不同（诱惑/逼近/回收）"
+    }
+  ],
+  "required_shots": [
+    { "shot_id": "S010", "must_contain": ["光熄灭"], "note": "结局必备，机器查 timeline/描述关键词" }
+  ],
+  "required_orientations": [
+    { "shot_id": "S001", "world_facing": "朝东", "note": "结局方位不可翻" }
+  ]
+}

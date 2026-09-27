@@ -1,0 +1,58 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema#",
+  "$id": "https://ai-film-production/schemas/bom.schema.json",
+  "title": "Bill of Materials (derived from shot cards)",
+  "type": "object",
+  "required": ["generated_at", "items"],
+  "properties": {
+    "generated_at": { "type": "string" },
+    "source_cards": {
+      "type": "array",
+      "items": { "type": "string" },
+      "description": "派生自哪些镜头卡"
+    },
+    "conflicts": {
+      "type": "array",
+      "description": "同 asset_id 规格冲突；非空则 build 失败",
+      "items": {
+        "type": "object",
+        "properties": {
+          "asset_id": { "type": "string" },
+          "shots": { "type": "array", "items": { "type": "string" } },
+          "reason": { "type": "string" }
+        }
+      }
+    },
+    "items": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": ["asset_id", "kind", "visual_spec", "target_path", "used_in", "status"],
+        "properties": {
+          "asset_id": { "type": "string" },
+          "kind": { "type": "string", "description": "资产类别，按其性质写明为 character / prop / scene / sound / voice / tts 之一，供下游脚本路由" },
+          "visual_spec": { "type": "string", "description": "外观摘要或指向设计卡的说明" },
+          "spec_path": { "type": "string", "description": "指向 06-bom/asset-specs 设计卡" },
+          "target_path": { "type": "string", "description": "member 成品落点，全 BOM 唯一" },
+          "used_in": { "type": "array", "items": { "type": "string" }, "minItems": 1 },
+          "status": {
+            "type": "string",
+            "description": "生产状态，按进展写明为 pending / produced / approved / rejected 之一；approved 只能由用户人审后标记，脚本据此词放行。粒度＝整张 member：任一 cell 废则整张非 approved"
+          },
+          "derived": {
+            "type": "boolean",
+            "description": "true=机械派生条目（voice/tts）"
+          },
+          "depends_on": {
+            "type": "array",
+            "description": "生产依赖（target_path 数组）：所列 member 成品未 approved 前，本件不得投产；如变体 sheet 垫 main、非首张 grid 垫上一张",
+            "items": { "type": "string" }
+          },
+          "grid_id": { "type": "string", "description": "kind=scene：本 BOM 行对应的 grid 编号" },
+          "sheet_id": { "type": "string", "description": "kind=character：本 BOM 行对应的 sheet 编号（main 或变体）" },
+          "review_note": { "type": "string" }
+        }
+      }
+    }
+  }
+}

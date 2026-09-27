@@ -1,0 +1,176 @@
+{
+  "shot_id": "S001",
+  "scene_id": "SC-入口",
+  "seq": 0,
+  "status": "design",
+  "duration_s": 8,
+  "duration_tier": "standard",
+  "beat": "开场钩子",
+  "hook": {
+    "hook_type": "suspense",
+    "note": "门缝冷光无故亮起，召唤者尚未现身"
+  },
+  "narrative_job": "在 8 秒内让观众确信：主角被门外某物召唤，却还没回头",
+
+  "timeline": [
+    {
+      "t": 0.0,
+      "picture": "昏黄室内，主角背对门坐在桌前，门在画面右侧，门缝下方无光",
+      "action": "静坐，双肩放松自然含胸",
+      "camera": "locked medium shot, eye-level",
+      "sound": "极轻夜虫声",
+      "handoff": "门缝无光、主角静坐的初始状态"
+    },
+    {
+      "t": 1.0,
+      "picture": "门缝下方缓慢亮起一线冷白光，横过地面",
+      "action": "光出现；主角仍静止（stretch 前兆：光线拉长）",
+      "camera": "locked；画面重心仍在右侧门缝",
+      "sound": "远处一声低而长的呼气，来自门外",
+      "handoff": "冷光铺地，主角尚未察觉"
+    },
+    {
+      "t": 2.0,
+      "picture": "主角肩膀微微一紧，握杯的手指收紧，但没有转身",
+      "action": "轻微 squash：肩膀内收、手指收缩；头部不动",
+      "camera": "locked，极轻 push-in 起步",
+      "sound": "silent",
+      "handoff": "主角已察觉但克制不回头，杯在手中"
+    },
+    {
+      "t": 3.0,
+      "picture": "门缝光线轻轻明暗一次，像有人在外侧俯身；机位极缓向门缝推近",
+      "action": "光线闪动；主角握杯的指节略白，背脊微绷",
+      "camera": "push-in small amplitude slow speed, dutch: 0°",
+      "sound": "布料蹭过木门的摩擦声",
+      "handoff": "门外者俯身，压迫感升到最高"
+    },
+    {
+      "t": 4.0,
+      "picture": "主角眼睫低垂，目光落在杯中水面，仍不回头；门缝冷光稳定",
+      "action": "微表情：眼神闪动一下又压下；身体不动",
+      "camera": "继续 slow push-in，焦点在主角与门缝同一焦平面",
+      "sound": "silent",
+      "handoff": "主角选择不应，落幅前的情绪定格"
+    },
+    {
+      "t": 5.0,
+      "picture": "主角仍背对门，杯在手中；门缝冷光稳定铺地",
+      "action": "静止，肩膀不再收紧",
+      "camera": "locked，推镜停止",
+      "sound": "夜虫声回归",
+      "handoff": "保持门缝光位与主角坐姿"
+    },
+    {
+      "t": 6.0,
+      "picture": "门外影子在缝光上一晃而过，像有人踱步",
+      "action": "主角手指又微微一收，但仍不回头",
+      "camera": "locked",
+      "sound": "门外极轻的脚步挪动声",
+      "handoff": "门外者未离去"
+    },
+    {
+      "t": 7.0,
+      "picture": "主角缓缓垂眼看着杯中水面，门缝光映在杯沿",
+      "action": "轻微低头 follow-through：肩背随呼吸松一下",
+      "camera": "极缓 arc 半步，幅度很小",
+      "sound": "silent",
+      "handoff": "主角决意不应，情绪压到最低"
+    },
+    {
+      "t": 8.0,
+      "picture": "落幅：主角背对门静坐，杯在手中，门缝冷光稳定铺地",
+      "action": "静止",
+      "camera": "locked",
+      "sound": "夜虫声持续",
+      "handoff": "交给 S002 首帧：保持门缝光位与主角坐姿"
+    }
+  ],
+
+  "cast": [
+    {
+      "character_id": "CHAR-主角",
+      "role_in_shot": "背影，占画面中左约 1/2，坐姿",
+      "retention": "fully_preserved"
+    }
+  ],
+
+  "needs": [
+    {
+      "asset_id": "CHAR-主角",
+      "kind": "character",
+      "target_path": "07-assets/characters/CHAR-主角/CHAR-主角_sheet.png"
+    },
+    {
+      "asset_id": "SC-入口室内",
+      "kind": "scene",
+      "target_path": "07-assets/scenes/SC-入口室内_g1.png",
+      "grid_id": "g1",
+      "cell": "c1"
+    },
+    {
+      "asset_id": "PROP-陶杯",
+      "kind": "prop",
+      "target_path": "07-assets/props/PROP-陶杯.png"
+    }
+  ],
+
+  "spatial_anchors": {
+    "fixed_landmarks": [
+      { "name": "门", "screen_position": "right third" },
+      { "name": "桌", "screen_position": "center bottom, left of door" },
+      { "name": "后墙小窗", "screen_position": "top-left, background" }
+    ],
+    "cast_positions": [
+      {
+        "character_id": "CHAR-主角",
+        "screen_position": "center-left midground",
+        "facing": "away",
+        "initial_pose": "seated at table, back to door, holding cup"
+      }
+    ],
+    "exited_characters": [],
+    "lighting_baseline": {
+      "key": "暖油灯，画面左前，弱",
+      "fill": "极弱环境天光，近乎无",
+      "rim": "none",
+      "modifier": "门外冷白缝光为唯一强对比，沿地面；silhouette 倾向但不成剪影"
+    }
+  },
+
+  "cinematography": {
+    "camera": {
+      "world_facing": "朝东（沿用 axis_table AX-入口-A，门在东墙）",
+      "position": "主角左后方约 1.5 米",
+      "height": "与坐姿主角肩部齐平",
+      "angle": "水平，极轻俯约 5°"
+    },
+    "lens": {
+      "focal_length": "35mm",
+      "dof": "浅景深，前景桌沿略虚，主角与门缝清晰",
+      "focus": "焦点锁右侧门缝，主角在同一焦平面"
+    },
+    "composition": "竖直画幅；右侧门缝光为视觉重心，主角背影占中左 1/2，桌面在下 1/3",
+    "lighting": "室内暖油灯光为主光，来自画面左前，弱；门外冷白缝光为唯一强对比，沿地面；无其他光源",
+    "movement": { "type": "固定为主，2s 起极轻推镜", "amplitude": "small", "speed": "slow" },
+    "continuity": "本镜为链首；下镜 S002 以本镜尾帧为首帧，保持门缝光位与主角坐姿"
+  },
+
+  "lip_sync": false,
+  "audio": {},
+
+  "tail": {
+    "export": true,
+    "tail_of": null,
+    "chain": "CHAIN-入口",
+    "target_path": "09-takes/S001/S001_tail.png"
+  },
+
+  "soul": {
+    "motif_marks": [
+      { "motif_id": "MOTIF-召唤之光", "occurrence": 1, "note": "光首次出现，意味＝诱惑" }
+    ]
+  },
+
+  "provenance": { "model": null, "workflow": null, "seed": null, "task_id": null }
+}

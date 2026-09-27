@@ -1,0 +1,58 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema#",
+  "$id": "https://ai-film-production/schemas/axis-table.schema.json",
+  "title": "Axis Table (world design · camera axes)",
+  "description": "04-world/<SCENE>/axis_table.json：叙事轴线与摄影机世界朝向，风格中立。机位以受控 ID 登记，镜卡 cinematography.camera.world_facing 引用这些 ID；左右映射由 build_axis.py 据 facing 机械计算，禁心算。越轴须显式声明。",
+  "type": "object",
+  "required": ["scene_id", "version", "frozen", "narrative_axes", "camera_facings"],
+  "properties": {
+    "scene_id": { "type": "string" },
+    "version": { "type": "string" },
+    "frozen": { "type": "boolean" },
+    "narrative_axes": {
+      "type": "array",
+      "minItems": 1,
+      "items": {
+        "type": "object",
+        "required": ["axis_id", "from", "to"],
+        "properties": {
+          "axis_id": { "type": "string" },
+          "from": { "type": "string", "description": "轴起点（space_id）" },
+          "to": { "type": "string", "description": "轴终点（space_id）" },
+          "screen_direction": { "type": "string", "enum": ["ltr", "rtl"] }
+        }
+      }
+    },
+    "camera_facings": {
+      "type": "array",
+      "minItems": 1,
+      "description": "受控机位 ID；镜卡 world_facing 引用这些 id",
+      "items": {
+        "type": "object",
+        "required": ["id", "space", "faces"],
+        "properties": {
+          "id": { "type": "string", "description": "机位 ID，如 cam-01" },
+          "space": { "type": "string", "description": "所在 space_id" },
+          "faces": {
+            "type": "string",
+            "enum": ["N", "NE", "E", "SE", "S", "SW", "W", "NW"]
+          },
+          "height": { "type": "string", "enum": ["low", "eye", "high"] }
+        }
+      }
+    },
+    "crossing_declarations": {
+      "type": "array",
+      "description": "越轴必须显式声明",
+      "items": {
+        "type": "object",
+        "required": ["axis_id", "shot_id"],
+        "properties": {
+          "axis_id": { "type": "string" },
+          "shot_id": { "type": "string" },
+          "reason": { "type": "string" }
+        }
+      }
+    }
+  }
+}

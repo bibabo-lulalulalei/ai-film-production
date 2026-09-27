@@ -1,0 +1,113 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema#",
+  "$id": "https://ai-film-production/schemas/style-matrix.schema.json",
+  "title": "Model × Style Matrix（模型×风格支持矩阵）",
+  "description": "[2] 风格定向第 3 拍产物，位于 03-style/model-matrix.json。每个候选风格对全部已登记模型（references/models/*/profile.json）逐一评级：native/supported/experimental/unsupported 四档＋证据＋缓解；候选描述词在模型 style_evidence 无命中时当场定向调研，结论带 query/日期/链接。矩阵只声明结构：不写死模型名与风格名。",
+  "type": "object",
+  "required": ["candidates"],
+  "properties": {
+    "generated_at": { "type": "string", "description": "矩阵生成日期" },
+    "sources": {
+      "type": "object",
+      "properties": {
+        "brief": { "type": "string", "description": "小说简要路径（01-novel/brief.md）" },
+        "comps": { "type": "string", "description": "同类调研记录路径（03-style/comps.md）" }
+      }
+    },
+
+    "candidates": {
+      "type": "array",
+      "minItems": 3,
+      "description": "N≥3 个自下而上归纳的候选风格，与 candidates.md 一致",
+      "items": {
+        "type": "object",
+        "required": ["candidate_id", "name", "model_ratings"],
+        "properties": {
+          "candidate_id": { "type": "string", "description": "候选编号（C1/C2/…，一经引用不重排）" },
+          "name": { "type": "string", "description": "候选名称（自由命名，具体可感）" },
+          "descriptor": { "type": "string", "description": "候选风格描述词（自由文本，来自同类作品真实视觉特征）" },
+
+          "model_ratings": {
+            "type": "array",
+            "minItems": 1,
+            "description": "对每个已登记模型一条评级",
+            "items": {
+              "type": "object",
+              "required": ["model", "level", "weight", "rationale"],
+              "properties": {
+                "model": { "type": "string", "description": "模型目录名（如 h3）" },
+                "matched_descriptor": {
+                  "type": ["string", "null"],
+                  "description": "命中的 style_evidence 记录描述词；无命中为 null（须填 research）"
+                },
+                "level": {
+                  "type": "string",
+                  "enum": ["native", "supported", "experimental", "unsupported"]
+                },
+                "weight": { "type": "integer", "minimum": 0, "maximum": 3 },
+                "evidence_refs": {
+                  "type": "array",
+                  "items": { "type": "string" },
+                  "description": "引用证据（profile style_evidence 的 source 或记录描述）"
+                },
+                "research": {
+                  "type": "object",
+                  "description": "证据库无命中时的当场定向调研",
+                  "required": ["query", "date"],
+                  "properties": {
+                    "query": { "type": "string" },
+                    "date": { "type": "string" },
+                    "url": { "type": "string" },
+                    "finding": { "type": "string" }
+                  }
+                },
+                "mitigations": {
+                  "type": "object",
+                  "description": "采用此组合时的强制缓解（探针/Style Key/首选 mode/负向词）",
+                  "properties": {
+                    "probe_required": { "type": "boolean" },
+                    "style_key_required": { "type": "boolean" },
+                    "preferred_modes": { "type": "array", "items": { "type": "string" } },
+                    "negative": { "type": "array", "items": { "type": "string" } }
+                  }
+                },
+                "rationale": { "type": "string", "description": "评级依据（大白话）" }
+              }
+            }
+          },
+          "rank": { "type": "integer", "minimum": 1, "description": "本候选的最佳组合排名（先按 weight 再按证据强度）" }
+        }
+      }
+    },
+
+    "ranking": {
+      "type": "array",
+      "description": "全部「候选×模型」组合排名",
+      "items": {
+        "type": "object",
+        "required": ["candidate_id", "model", "weight"],
+        "properties": {
+          "candidate_id": { "type": "string" },
+          "model": { "type": "string" },
+          "weight": { "type": "integer" },
+          "recommend_switch": {
+            "type": "boolean",
+            "description": "true＝该候选在此模型评级更高，显式建议从其他模型更换"
+          }
+        }
+      }
+    },
+
+    "selection": {
+      "type": "object",
+      "description": "用户在候选规格＋矩阵上选定的组合（选定后回写 charter 锁定模型）",
+      "required": ["candidate_id", "model", "selected_by", "date"],
+      "properties": {
+        "candidate_id": { "type": "string" },
+        "model": { "type": "string" },
+        "selected_by": { "type": "string", "description": "固定为 user：不替用户拍板" },
+        "date": { "type": "string" }
+      }
+    }
+  }
+}

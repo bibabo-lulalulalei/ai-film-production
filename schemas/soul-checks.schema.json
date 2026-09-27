@@ -1,0 +1,56 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema#",
+  "$id": "https://ai-film-production/schemas/soul-checks.schema.json",
+  "title": "Soul Checks (machine rules for the theme-motifs)",
+  "description": "01-novel/soul-checks.json：魂的机器规则。键名与 lint_cards.check_soul_rules 的读取严格对齐（motifs[].order / required_shots / required_orientations）。镜卡 soul.motif_marks 据 motif_id 回指。",
+  "type": "object",
+  "required": ["motifs"],
+  "properties": {
+    "version": { "type": "string" },
+    "motifs": {
+      "type": "array",
+      "minItems": 1,
+      "items": {
+        "type": "object",
+        "required": ["motif_id", "min_count", "order", "meaning_changes"],
+        "properties": {
+          "motif_id": { "type": "string" },
+          "min_count": { "type": "integer", "minimum": 1 },
+          "order": {
+            "type": "array",
+            "description": "镜序；用 is_subsequence 核 motif_marks 出现顺序",
+            "items": { "type": "string" }
+          },
+          "meaning_changes": { "type": "boolean" },
+          "description": { "type": "string" }
+        }
+      }
+    },
+    "required_shots": {
+      "type": "array",
+      "description": "必备节拍镜；镜缺失即 FAIL",
+      "items": {
+        "type": "object",
+        "required": ["shot_id"],
+        "properties": {
+          "shot_id": { "type": "string" },
+          "must_contain": { "type": "array", "items": { "type": "string" } },
+          "note": { "type": "string" }
+        }
+      }
+    },
+    "required_orientations": {
+      "type": "array",
+      "description": "机位方位必备；镜缺失 FAIL，world_facing 子串核对",
+      "items": {
+        "type": "object",
+        "required": ["shot_id", "world_facing"],
+        "properties": {
+          "shot_id": { "type": "string" },
+          "world_facing": { "type": "string", "enum": ["N", "NE", "E", "SE", "S", "SW", "W", "NW"] },
+          "note": { "type": "string" }
+        }
+      }
+    }
+  }
+}

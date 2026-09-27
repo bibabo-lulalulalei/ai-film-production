@@ -1,0 +1,205 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema#",
+  "$id": "https://ai-film-production/schemas/style-spec.schema.json",
+  "title": "Style Spec（画风规格 · 槽位契约）",
+  "description": "项目级画风的唯一结构化事实源，落在 03-style/style-spec.json，由风格岗在 [9] 按槽填写。固定槽位与项目无关：换一部片子只换槽内取值、不改结构。每个槽只准写模型看得见、画得出、可核对的具体画面特征（数量、hex、形状、材质、光影、位置）；禁止『精致/好看/高级/大气』这类空形容词，禁止只写片名或流派名——可在备注中提及片名作气质参考，但执行依据必须是具体特征。脚本按槽提取、按资产类别拼装注入全部生产词；校验闸 (--gate SS) 强卡槽位齐全非空，提取失败即报错、不静默回退。",
+  "type": "object",
+  "required": [
+    "medium", "shape_language", "proportions", "materials", "look",
+    "color_script", "line", "motion", "scale_chart", "negative"
+  ],
+  "properties": {
+    "style_name": {
+      "type": "string",
+      "description": "本项目画风的简短自命名（供人识别，不作执行依据）"
+    },
+    "references": {
+      "type": "array",
+      "description": "气质参考作品（仅供人理解韵味，模型不依赖它执行）",
+      "items": { "type": "string" }
+    },
+
+    "medium": {
+      "type": "object",
+      "description": "媒介：画面到底是什么。用具体可见特征定义，排除掉的媒介单列。",
+      "required": ["is", "not"],
+      "properties": {
+        "is": {
+          "type": "string",
+          "description": "正面定义媒介的可见特征，如：风格化三维建模渲染，有体积/透视/遮挡/光影"
+        },
+        "not": {
+          "type": "array",
+          "minItems": 1,
+          "items": { "type": "string" },
+          "description": "明确排除的媒介，如：真人实拍、平面绘画、赛璐璐2D"
+        }
+      }
+    },
+
+    "shape_language": {
+      "type": "object",
+      "description": "形状语言：全片造型的总倾向，是角色与场景造型统一的根。",
+      "required": ["tendency", "silhouette", "edges"],
+      "properties": {
+        "tendency": {
+          "type": "string",
+          "description": "方/圆/曲/直、饱满/清减的总体倾向及在角色与场景上的体现"
+        },
+        "silhouette": {
+          "type": "string",
+          "description": "剪影的可读性与外轮廓特征"
+        },
+        "edges": {
+          "type": "string",
+          "description": "形体转折边缘的处理：硬/柔、过渡方式"
+        }
+      }
+    },
+
+    "proportions": {
+      "type": "object",
+      "description": "比例：写实或风格化到何种程度。",
+      "required": ["human", "anatomy"],
+      "properties": {
+        "human": {
+          "type": "string",
+          "description": "成人/儿童头身比与年龄观感，给具体头身数或区间"
+        },
+        "anatomy": {
+          "type": "string",
+          "description": "肩颈、四肢、五官疏密等结构写实程度的具体要求"
+        }
+      }
+    },
+
+    "materials": {
+      "type": "object",
+      "description": "材质：量化的表面特征，让模型不靠『哑光』二字自由发挥。",
+      "required": ["overall", "surfaces"],
+      "properties": {
+        "overall": {
+          "type": "string",
+          "description": "总体反光倾向（强/弱）、新旧、温润或冷硬"
+        },
+        "surfaces": {
+          "type": "array",
+          "minItems": 1,
+          "description": "逐类表面给出反光强度/粗糙度/金属感的具体描述",
+          "items": {
+            "type": "object",
+            "required": ["part", "quality"],
+            "properties": {
+              "part": { "type": "string", "description": "材质类：皮肤/布/木/陶/金属等" },
+              "quality": {
+                "type": "string",
+                "description": "粗糙度/高光形态/金属感/织理的具体可见特征"
+              }
+            }
+          }
+        }
+      }
+    },
+
+    "look": {
+      "type": "object",
+      "description": "Look／渲染：决定电影感的镜头与成像规格。",
+      "required": ["exposure", "contrast", "depth_of_field", "highlights", "grain"],
+      "properties": {
+        "exposure": { "type": "string", "description": "整体曝光档位与高光暗部落点" },
+        "contrast": { "type": "string", "description": "反差强弱、明暗过渡软硬" },
+        "depth_of_field": {
+          "type": "string",
+          "description": "景深用法：全景/近景的虚实处理"
+        },
+        "highlights": {
+          "type": "string",
+          "description": "高光形态：柔和/锐利、滚光与晕光"
+        },
+        "grain": {
+          "type": "string",
+          "description": "颗粒/画面洁净度（无颗粒写明）"
+        }
+      }
+    },
+
+    "color_script": {
+      "type": "array",
+      "minItems": 1,
+      "description": "色彩脚本：随剧情节拍推进的色彩与情绪序列（不是两个冷暖桶）。按节拍列出。",
+      "items": {
+        "type": "object",
+        "required": ["beat", "palette", "function"],
+        "properties": {
+          "beat": { "type": "string", "description": "剧情节拍（场次/章节名）" },
+          "palette": {
+            "type": "array",
+            "minItems": 1,
+            "items": { "type": "string" },
+            "description": "该节拍主色（带 hex 或色名）"
+          },
+          "function": {
+            "type": "string",
+            "description": "该段色彩承担的叙事/情绪作用"
+          }
+        }
+      }
+    },
+
+    "line": {
+      "type": "object",
+      "description": "线条：按景深分层的线法。",
+      "required": ["near", "far", "forbidden"],
+      "properties": {
+        "near": { "type": "string", "description": "近景塑形是否用线、如何转面" },
+        "far": { "type": "string", "description": "远景允许的笔触与皴法（落在立体表面）" },
+        "forbidden": { "type": "string", "description": "禁止的线条，如等粗矢量描边" }
+      }
+    },
+
+    "motion": {
+      "type": "object",
+      "description": "运动风格：全片动势、缓动与节奏的统一规格。",
+      "required": ["dynamics", "easing", "camera"],
+      "properties": {
+        "dynamics": { "type": "string", "description": "动势强弱、表演节奏" },
+        "easing": {
+          "type": "string",
+          "description": "起止缓动方式（急启急停/柔和加减速）"
+        },
+        "camera": { "type": "string", "description": "镜头运动的总体风格与幅度倾向" }
+      }
+    },
+
+    "scale_chart": {
+      "type": "object",
+      "description": "尺度总图：全片角色与关键道具的 canonical 尺度，替代散落的相对身高散文。",
+      "required": ["heights", "anchor"],
+      "properties": {
+        "heights": {
+          "type": "array",
+          "minItems": 1,
+          "items": {
+            "type": "object",
+            "required": ["who", "cm"],
+            "properties": {
+              "who": { "type": "string", "description": "角色标识" },
+              "cm": { "type": "number", "description": "身高厘米" }
+            }
+          }
+        },
+        "anchor": {
+          "type": "string",
+          "description": "尺度锚：关键小物与身体/掌的关系等统一参照"
+        }
+      }
+    },
+
+    "negative": {
+      "type": "array",
+      "minItems": 1,
+      "description": "全局负向排除：跨资产一致的失败模式清单",
+      "items": { "type": "string" }
+    }
+  }
+}

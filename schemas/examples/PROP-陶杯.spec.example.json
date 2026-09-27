@@ -1,0 +1,70 @@
+{
+  "asset_id": "PROP-陶杯",
+  "kind": "prop",
+
+  "identity": {
+    "name": "粗陶小杯",
+    "category": "日用器物 / 饮器",
+    "period": "元代民窑",
+    "use": "盛水、手持",
+    "used_by": ["CHAR-主角"]
+  },
+
+  "dimensions": {
+    "size": { "length": "口径 6cm", "width": "底径 4cm", "height": "7cm" },
+    "scale_reference": "一握之物：成人手掌恰好合围，占画面手部很小",
+    "part_ratios": "杯高≈口径的 1.15 倍"
+  },
+
+  "parts": [
+    { "part": "杯身", "shape": "略束口、下腹微鼓、收小平底", "count": 1,
+      "position": "主体", "connection": "与底一体拉坯" },
+    { "part": "口沿", "shape": "圆唇外撇", "count": 1, "position": "顶端" }
+  ],
+
+  "materials": [
+    { "part": "杯身", "material": "粗陶、含细砂粒", "color_hex": "#8A7B6A",
+      "finish": "哑光、无釉光", "texture": "表面可见拉坯痕与细砂点" }
+  ],
+
+  "decoration": {
+    "motifs": [],
+    "layout": "无纹饰",
+    "technique": "素烧",
+    "symmetry": "轴对称"
+  },
+
+  "age": {
+    "condition": "旧、日常使用",
+    "patina": "外壁有经年手渍形成的深色包浆，下半为甚",
+    "wear_locations": [
+      { "wear": "一处缺釉小磕", "location": "口沿左侧约 1cm" }
+    ]
+  },
+
+  "weight_impression": "轻、粗朴",
+
+  "presentation": {
+    "background": "做旧绢面 #E8E0CC，无实景",
+    "lighting": "单一柔光，左上，弱投影",
+    "scale_marker": false,
+    "grid": {
+      "target_path": "07-assets/props/PROP-陶杯.png",
+      "cells": [
+        { "position": "tl", "view": "正面，杯口水平" },
+        { "position": "tr", "view": "侧面，看束口与下腹弧度" },
+        { "position": "bl", "view": "俯视，看口径与小平底" },
+        { "position": "br", "view": "口沿局部特写",
+          "must_see": "左侧约 1cm 的缺釉小磕" }
+      ]
+    }
+  },
+
+  "acceptance": {
+    "criteria": [
+      "束口鼓腹、底足小；哑光粗陶含砂，色值≈#8A7B6A",
+      "口沿小磕位置正确；无花纹、无釉光"
+    ],
+    "negative": ["瓷器光泽、彩釉、花纹、塑料感、现代器形、水印"]
+  }
+}

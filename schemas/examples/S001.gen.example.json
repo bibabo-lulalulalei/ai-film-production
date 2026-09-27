@@ -1,0 +1,34 @@
+{
+  "workflow": "minimax-h3-ref2va",
+  "mode": "Ref2VA",
+  "model": "H3",
+  "resolution": "768P",
+  "aspect": "9:16",
+  "fps": 24,
+  "duration_s": 8,
+  "use_range": [0, 8],
+
+  "ref_images": [
+    { "slot": "ref_image_0", "label": "<Subject 1>",
+      "path": "03-style/keys/warm_key.png", "role": "style-key" },
+    { "slot": "ref_image_1", "label": "<Subject 2>",
+      "path": "07-assets/characters/CHAR-主角/CHAR-主角_sheet.png",
+      "role": "character-sheet" },
+    { "slot": "ref_image_2", "label": "<Subject 3>",
+      "path": "07-assets/scenes/SC-入口室内_g1.png",
+      "role": "scene-grid", "cell": "c1" },
+    { "slot": "ref_image_3", "label": "<Subject 4>",
+      "path": "07-assets/props/PROP-陶杯.png", "role": "prop-grid" }
+  ],
+  "ref_audios": [],
+
+  "negative": [
+    "现代灯具/家具等年代错位构件",
+    "额外人物、人群、人影",
+    "乱码字幕、招牌密集可读文字",
+    "多余转场、水印",
+    "真人写实感、塑料质感、明亮曝光、不符风格定向的画风"
+  ],
+
+  "provenance": { "model": null, "workflow": null, "seed": null, "task_id": null }
+}

@@ -1,0 +1,19 @@
+# Python 编译产物
+__pycache__/
+*.py[cod]
+
+# 凭证（绝不入库；配置走环境变量或 --config）
+tools/**/s3.env
+*.env
+!*.env.example
+
+# 项目数据 / 临时工作区（只属于具体项目，不属 skill 本体）
+workspace/
+*-workspace/
+
+# 探针与小批量渲染临时产物（位于项目根，列入作同源卫生）
+03-style/probes/
+
+# 系统/编辑器杂项
+.DS_Store
+Thumbs.db

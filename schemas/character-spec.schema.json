@@ -1,0 +1,218 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema#",
+  "$id": "https://ai-film-production/schemas/character-spec.schema.json",
+  "title": "Character Asset Design Card",
+  "description": "每个角色唯一一份详细外观设计。所有字段都据当前项目判断填写，不提供候选值：字段说明只告诉你该思考什么，具体措辞由你结合角色身份、年龄、时代地域与剧情需要决定。信息确实无法从项目得知时，先回上游查证或登记待补，不要从固定选项里挑一个填上。",
+  "type": "object",
+  "required": [
+    "asset_id", "kind", "identity", "stature", "proportions", "head_face",
+    "hair", "skin", "hands_feet", "costume", "performance", "consistency",
+    "sheets", "acceptance"
+  ],
+  "properties": {
+    "asset_id": { "type": "string", "description": "角色全局稳定标识，与镜头卡 needs 引用一致，一经引用不重排" },
+    "kind": { "type": "string", "description": "资产类别，固定填 character；须与镜头卡 needs 中该 ID 的 kind 一致，供下游脚本路由" },
+
+    "identity": {
+      "type": "object",
+      "required": ["name", "age", "sex", "station", "period_region", "health"],
+      "properties": {
+        "name": { "type": "string", "description": "角色名号，含剧情中所有称呼" },
+        "age": { "type": "integer", "description": "确切年龄，按剧情时间线推断，不写模糊年龄段" },
+        "sex": { "type": "string", "description": "生理性别" },
+        "station": { "type": "string", "description": "身份阶层与生计处境，想清它如何外化为穿着、体态与气质" },
+        "period_region": { "type": "string", "description": "所处时代与地域，决定服制、发式、器物的考证范围" },
+        "health": { "type": "string", "description": "健康与精力状况，包括慢性伤病、亏损、残疾等会影响体态与面色的情况" }
+      }
+    },
+
+    "stature": {
+      "type": "object",
+      "required": ["height_cm", "build", "posture", "visual_weight",
+                   "relative_height"],
+      "properties": {
+        "height_cm": { "type": "number", "description": "确切身高（厘米），结合时代人群身高与角色年龄判断" },
+        "build": { "type": "string", "description": "整体胖瘦、骨架粗细与肌肉丰盈程度，描述其给人的具体观感，而非归入某一类型" },
+        "shoulders": { "type": "string", "description": "肩的宽窄、厚薄与形态，是否端平或内收" },
+        "waist_hips": { "type": "string", "description": "腰与臀的宽窄、松紧印象" },
+        "posture": { "type": "string", "description": "日常站坐的身体姿态与习惯用力方式，结合性格、职业、健康推断它如何形成" },
+        "visual_weight": { "type": "string", "description": "整个人在画面里的轻重分量感，由骨架、体态与气质综合呈现" },
+        "relative_height": { "type": "string", "description": "与同框角色的高矮关系及差距，保证多人画面比例成立" }
+      }
+    },
+
+    "proportions": {
+      "type": "object",
+      "required": ["head_body_ratio", "shoulder_head_widths", "neck",
+                   "leg_torso_ratio", "limbs"],
+      "properties": {
+        "head_body_ratio": { "type": "number", "description": "头身比，按年龄、身份与目标画风判断该写实或风格化到何种程度" },
+        "face_ratio": {
+          "type": "object",
+          "required": ["three_courts", "five_eyes"],
+          "properties": {
+            "three_courts": { "type": "string", "description": "面部上中下三庭的长短比例，决定成熟或幼态等观感" },
+            "five_eyes": { "type": "string", "description": "面宽与眼距的比例关系，描述眼睛在脸上的疏密位置" }
+          }
+        },
+        "shoulder_head_widths": { "type": "number", "description": "肩宽相当于几个头宽，与性别、年龄、身份相称" },
+        "neck": { "type": "string", "description": "颈部长短粗细与筋线形态" },
+        "leg_torso_ratio": { "type": "string", "description": "腰线高低与上下身长短关系" },
+        "limbs": { "type": "string", "description": "四肢长短与粗细，结合角色是否劳作、习武等生活经验判断" }
+      }
+    },
+
+    "head_face": {
+      "type": "object",
+      "required": ["face_shape", "brows", "eyes", "nose", "mouth", "cheeks",
+                   "chin", "ears", "wrinkles", "distinguishing_marks"],
+      "properties": {
+        "face_shape": { "type": "string", "description": "脸型轮廓与骨骼转折" },
+        "forehead": { "type": "string", "description": "额头形态与纹理" },
+        "brows": { "type": "string", "description": "眉的形状、浓淡、毛发走向与神态倾向" },
+        "eyes": { "type": "string", "description": "眼形、眼睑结构、眼尾走向与眼神，想清这张脸最该被记住的目光" },
+        "nose": { "type": "string", "description": "鼻梁、鼻头、鼻翼的形态" },
+        "mouth": { "type": "string", "description": "唇形厚薄、嘴角自然状态" },
+        "cheeks": { "type": "string", "description": "面颊丰盈或清减、颧骨起伏" },
+        "chin": { "type": "string", "description": "下巴形态" },
+        "ears": { "type": "string", "description": "耳形与贴张程度" },
+        "wrinkles": { "type": "string", "description": "皱纹与筋膜纹路：具体位置、走向、深浅，符合年龄与表情习惯" },
+        "distinguishing_marks": {
+          "type": "array",
+          "description": "所有能锁定身份的特征标记，如痣、疤、斑、胎记；没有则为空数组，不要为凑数添加",
+          "items": {
+            "type": "object",
+            "required": ["mark", "location"],
+            "properties": {
+              "mark": { "type": "string", "description": "标记本身的形态、大小、颜色" },
+              "location": { "type": "string", "description": "在脸部或身体的确切位置" }
+            }
+          }
+        }
+      }
+    },
+
+    "hair": {
+      "type": "object",
+      "required": ["color_hex", "hairline", "style", "texture", "ornaments"],
+      "properties": {
+        "color_hex": { "type": "string", "pattern": "^#[0-9A-Fa-f]{3,8}$", "description": "发色，以 # 开头的色值表示" },
+        "hairline": { "type": "string", "description": "发际线形态与高低" },
+        "style": { "type": "string", "description": "发式的完整结构与梳理方式，须符合时代与身份的考证，描述其如何束、绾、固定" },
+        "texture": { "type": "string", "description": "发量与发质，如软硬、曲直、蓬服" },
+        "ornaments": {
+          "type": "array",
+          "description": "穿戴且无独立剧情动作的饰物：描述写在此处、随定妆 sheet 一起画出，不另建道具。只有具备独立银幕生命（被持用/特写/变形/陈设）者才另建 prop，并用 prop_ref 关联，重叠允许。没有则为空数组",
+          "items": {
+            "type": "object",
+            "required": ["item", "worn_position", "description"],
+            "properties": {
+              "item": { "type": "string", "description": "饰物名称（含时代称谓），如银鎏金海棠簪" },
+              "worn_position": { "type": "string", "description": "穿戴的确切位置与固定方式，如左髻外侧、簪脚斜向后" },
+              "description": { "type": "string", "description": "材质/形制/尺寸/色彩/纹样的完整描述，须足以直接画入 sheet" },
+              "color_hex": { "type": "string", "pattern": "^#[0-9A-Fa-f]{3,8}$", "description": "饰物主色（可选）" },
+              "prop_ref": { "type": "string", "description": "同物另建有 prop 资产时填其 prop ID；该 prop 卡须在 use 注明 worn by 本角色" }
+            }
+          }
+        }
+      }
+    },
+
+    "skin": {
+      "type": "object",
+      "required": ["color_hex", "texture"],
+      "properties": {
+        "color_hex": { "type": "string", "pattern": "^#[0-9A-Fa-f]{3,8}$", "description": "肤色，以 # 开头的色值表示，注意不同光下的冷暖倾向写入 tone_note" },
+        "texture": { "type": "string", "description": "肤质，结合生活处境描述粗细、风霜或细腻程度" },
+        "tone_note": { "type": "string", "description": "面色与冷暖倾向，如病色、劳作晒色等" }
+      }
+    },
+
+    "hands_feet": {
+      "type": "object",
+      "required": ["hands", "feet"],
+      "properties": {
+        "hands": { "type": "string", "description": "手的大小、骨节、肤质、指甲状态，应能读出角色的生活经验" },
+        "feet": { "type": "string", "description": "足部形态与鞋袜的关系" }
+      }
+    },
+
+    "costume": {
+      "type": "array",
+      "minItems": 1,
+      "description": "全身穿着逐件拆开列写，按实际穿着顺序组织；不要用一个统称概括",
+      "items": {
+        "type": "object",
+        "required": ["garment", "layer", "material", "color_hex", "cut",
+                     "condition"],
+        "properties": {
+          "garment": { "type": "string", "description": "衣物名称，符合时代称谓" },
+          "layer": { "type": "string", "description": "它在整体穿着中的层级与位置，按实际叠穿关系描述" },
+          "material": { "type": "string", "description": "面料材质与织理，须能体现身份与穿着场合" },
+          "color_hex": { "type": "string", "pattern": "^#[0-9A-Fa-f]{3,8}$", "description": "衣物颜色，以 # 开头的色值表示" },
+          "pattern": { "type": "string", "description": "纹样与装饰，符合时代与身份；没有花纹则写明" },
+          "cut": { "type": "string", "description": "剪裁结构，包括领、襟、袖、摆的具体形态与开合方向" },
+          "condition": { "type": "string", "description": "新旧成色与所有破损、补缀的具体位置，无破损则写明" },
+          "fastening": { "type": "string", "description": "系束方式，如带、扣、结的位置与形态" }
+        }
+      }
+    },
+
+    "performance": {
+      "type": "object",
+      "required": ["default_expression", "habits", "stance_gait"],
+      "properties": {
+        "default_expression": { "type": "string", "description": "角色放松时的中性自然神情；定妆 sheet 的正脸特写格据此，非戏剧化表情" },
+        "expression_list": {
+          "type": "array",
+          "description": "写词/表演指引（非生产清单，不产静态图）：据剧情统计该角色需要承载的神情如何从同一张脸上长出；镜头卡 required_expression 应能在此对应",
+          "items": { "type": "string" }
+        },
+        "habits": { "type": "string", "description": "习惯性小动作与肢体反应，结合性格与欲望推断" },
+        "stance_gait": { "type": "string", "description": "站姿与步态的具体样貌，应与体态、身份、性格一致" }
+      }
+    },
+
+    "consistency": {
+      "type": "object",
+      "required": ["sheet_ref", "style_key_ref"],
+      "properties": {
+        "sheet_ref": { "type": "string", "description": "主定妆 sheet（sheets[] 中 sheet_id=main）的成品路径，角色身份根/首件；须与该 sheet 的 target_path 一致" },
+        "style_key_ref": { "type": "string", "description": "全片画风样板图路径" }
+      }
+    },
+
+    "sheets": {
+      "type": "array",
+      "minItems": 1,
+      "description": "每角色一张主定妆 sheet（sheet_id=main）；状态变体（易容/受伤/盛装等）追加一张。每张固定 1×4 横向均分条，从左到右：A=正脸头肩特写（中性表情），B=全身正面，C=全身侧面，D=全身背面；四格等高、饰品穿戴在身、素底。任一 cell 废则整张重烧，禁止补单格",
+      "items": {
+        "type": "object",
+        "required": ["sheet_id", "state", "target_path"],
+        "properties": {
+          "sheet_id": { "type": "string", "pattern": "^[a-z][a-z0-9-]*$", "description": "主表固定 main；变体如 wounded / disguised / formal" },
+          "state": { "type": "string", "description": "本张呈现的状态：默认定妆/易容/受伤/盛装等" },
+          "target_path": { "type": "string", "description": "sheet 成品落点（相对项目根）" },
+          "note": { "type": "string", "description": "需要补充说明的变体差异（可选）" }
+        }
+      }
+    },
+
+    "acceptance": {
+      "type": "object",
+      "required": ["criteria", "negative"],
+      "properties": {
+        "criteria": {
+          "type": "array",
+          "description": "逐项可核对的验收点，写出成品必须满足的身份、比例、服装、画风要求",
+          "items": { "type": "string" }
+        },
+        "negative": {
+          "type": "array",
+          "description": "需要排除的失败模式，针对该角色最易出错之处具体写出，而非通用套话",
+          "items": { "type": "string" }
+        }
+      }
+    }
+  }
+}

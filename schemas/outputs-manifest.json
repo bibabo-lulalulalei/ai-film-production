@@ -1,0 +1,34 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema#",
+  "$id": "https://ai-film-production/schemas/outputs-manifest.json",
+  "title": "Outputs Value Manifest (skill self-description)",
+  "description": "登记 skill 每个标准产出物：谁产出、价值级别、谁消费、处置方式。校验器据此保证『高价值产出物必有机械消费；删除必须附无价值证据』。decision 取值：extend-downstream(改下游补用) | review-checklist(人审留痕) | merge-ref(合并单源) | conditional(条件必填) | archive(归档) | keep(已在用) | delete(确无价值)。",
+  "type": "object",
+  "required": ["version", "outputs"],
+  "properties": {
+    "version": { "type": "string" },
+    "outputs": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": ["output", "produced_by", "value_tier", "decision", "consumed_by"],
+        "properties": {
+          "output": { "type": "string", "description": "产出物标识（文件路径或 字段路径）" },
+          "produced_by": { "type": "string", "description": "产生环节，如 [7]" },
+          "value_tier": { "enum": ["V3", "V2", "V1"], "description": "V3高/V2中/V1低" },
+          "decision": {
+            "enum": ["extend-downstream", "review-checklist", "merge-ref",
+                      "conditional", "archive", "keep", "delete"]
+          },
+          "consumed_by": {
+            "type": "array",
+            "items": { "type": "string" },
+            "description": "消费者（脚本/闸门/模板槽/环节）；归档/删除可空但须在 rationale 说明"
+          },
+          "frozen_after": { "type": "string", "description": "在哪个闸之后冻结" },
+          "rationale": { "type": "string", "description": "价值/删除/归档理由" }
+        }
+      }
+    }
+  }
+}

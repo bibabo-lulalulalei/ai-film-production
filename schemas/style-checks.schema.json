@@ -1,0 +1,28 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema#",
+  "$id": "https://ai-film-production/schemas/style-checks.schema.json",
+  "title": "Style Checks (machine style rules)",
+  "description": "03-style/style-checks.json：风格机器规则。forbidden_terms 被 G05 扫描、[9b] 注入生产词。color_anchors 在 P2 与 style-spec 合并（保留一份），样板图强制权威在 profile.pipeline_requirements，故不在此重复。",
+  "type": "object",
+  "required": ["forbidden_terms"],
+  "properties": {
+    "version": { "type": "string" },
+    "forbidden_terms": {
+      "type": "array",
+      "minItems": 1,
+      "items": { "type": "string" }
+    },
+    "color_anchors": {
+      "type": "array",
+      "description": "P2 与 style-spec 色板合并前的过渡登记；hex 须合法",
+      "items": {
+        "type": "object",
+        "required": ["name", "hex"],
+        "properties": {
+          "name": { "type": "string" },
+          "hex": { "type": "string", "pattern": "^#[0-9A-Fa-f]{3,8}$" }
+        }
+      }
+    }
+  }
+}

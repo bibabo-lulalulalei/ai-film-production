@@ -1,0 +1,177 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema#",
+  "$id": "https://ai-film-production/schemas/prop-spec.schema.json",
+  "title": "Prop Asset Design Card",
+  "description": "每件道具唯一一份详细设计。字段不给候选值：依据剧情用途、时代考证与目标画风自行判断填写；无法从项目得知的信息先查证或登记待补，不凭空选择。",
+  "type": "object",
+  "required": [
+    "asset_id", "kind", "identity", "dimensions", "parts", "materials",
+    "decoration", "age", "presentation", "acceptance"
+  ],
+  "properties": {
+    "asset_id": { "type": "string", "description": "道具全局稳定标识，与镜头卡引用一致，一经引用不重排" },
+    "kind": { "type": "string", "description": "资产类别，固定填 prop；须与镜头卡 needs 中该 ID 的 kind 一致，供下游脚本路由" },
+
+    "identity": {
+      "type": "object",
+      "required": ["name", "category", "period", "use", "used_by"],
+      "properties": {
+        "name": { "type": "string", "description": "器物名称，含时代称谓" },
+        "category": { "type": "string", "description": "它属于哪类器物、在生活中承担什么功能" },
+        "period": { "type": "string", "description": "时代与地域背景，决定形制与工艺的考证范围" },
+        "use": { "type": "string", "description": "剧情中它的用途及需要完成的动作" },
+        "used_by": {
+          "type": "array",
+          "description": "使用它的角色标识，逐个引用",
+          "items": { "type": "string" }
+        }
+      }
+    },
+
+    "dimensions": {
+      "type": "object",
+      "required": ["size", "scale_reference"],
+      "properties": {
+        "size": {
+          "type": "object",
+          "required": ["length", "width", "height"],
+          "properties": {
+            "length": { "type": "string", "description": "具体长度，含单位" },
+            "width": { "type": "string", "description": "具体宽度，含单位" },
+            "height": { "type": "string", "description": "具体高度，含单位" }
+          }
+        },
+        "scale_reference": {
+          "type": "string",
+          "description": "尺度锚：描述它与使用者身体或握持部位、所处家具之间的大小关系，使画面比例有依据"
+        },
+        "part_ratios": { "type": "string", "description": "各关键部件之间的相对比例" }
+      }
+    },
+
+    "parts": {
+      "type": "array",
+      "minItems": 1,
+      "description": "把器物拆成组成部件逐个列写，描述其形态与如何连接，不用整体名称含混带过",
+      "items": {
+        "type": "object",
+        "required": ["part", "shape", "count", "position"],
+        "properties": {
+          "part": { "type": "string", "description": "部件名称" },
+          "shape": { "type": "string", "description": "该部件的具体形状与轮廓" },
+          "count": { "type": "integer", "description": "数量，按器物实际构造确定" },
+          "position": { "type": "string", "description": "它在器物上的位置" },
+          "connection": { "type": "string", "description": "与相邻部件的连接方式" }
+        }
+      }
+    },
+
+    "materials": {
+      "type": "array",
+      "minItems": 1,
+      "description": "逐部件说明材质与表面处理",
+      "items": {
+        "type": "object",
+        "required": ["part", "material", "color_hex", "finish"],
+        "properties": {
+          "part": { "type": "string", "description": "对应的部件名称" },
+          "material": { "type": "string", "description": "材质本身，描述其来源与质地" },
+          "color_hex": { "type": "string", "pattern": "^#[0-9A-Fa-f]{3,8}$", "description": "该部件颜色，以 # 开头的色值表示" },
+          "finish": { "type": "string", "description": "表面处理方式与最终光泽观感" },
+          "texture": { "type": "string", "description": "纹理与触感细节" }
+        }
+      }
+    },
+
+    "decoration": {
+      "type": "object",
+      "required": ["motifs", "layout", "technique", "symmetry"],
+      "properties": {
+        "motifs": {
+          "type": "array",
+          "description": "装饰纹样，符合时代工艺与器物身份；无装饰则为空数组",
+          "items": { "type": "string" }
+        },
+        "layout": { "type": "string", "description": "纹样在器物上的分布与位置安排" },
+        "technique": { "type": "string", "description": "制作这些装饰的工艺手法" },
+        "symmetry": { "type": "string", "description": "整体或纹饰的对称关系，按实际形制描述" }
+      }
+    },
+
+    "age": {
+      "type": "object",
+      "required": ["condition", "wear_locations"],
+      "properties": {
+        "condition": { "type": "string", "description": "新旧成色与使用状态" },
+        "patina": { "type": "string", "description": "经年使用形成的包浆及其位置、观感" },
+        "wear_locations": {
+          "type": "array",
+          "description": "磨损、磕碰、锈蚀、残缺等，逐项定位到具体部位；没有则为空数组",
+          "items": {
+            "type": "object",
+            "required": ["wear", "location"],
+            "properties": {
+              "wear": { "type": "string", "description": "损伤的形态与程度" },
+              "location": { "type": "string", "description": "所在部位" }
+            }
+          }
+        }
+      }
+    },
+
+    "weight_impression": { "type": "string", "description": "拿取或移动时的轻重感，影响角色持用时的动作表演" },
+
+    "presentation": {
+      "type": "object",
+      "required": ["background", "lighting", "scale_marker", "grid"],
+      "properties": {
+        "background": { "type": "string", "description": "生成时所用背景的具体要求，应服务而非干扰形制呈现" },
+        "lighting": { "type": "string", "description": "布光要求，以清楚呈现结构与材质为准" },
+        "scale_marker": { "type": "boolean", "description": "是否需要加入尺度参照物" },
+        "grid": {
+          "type": "object",
+          "description": "一物一张多视图宫格，一次生成保证各视图是同一物；简单物可单图（cells 仅一条 position=single）。任一 cell 废则整张重烧，禁止补单格",
+          "required": ["target_path", "cells"],
+          "properties": {
+            "target_path": { "type": "string", "description": "宫格整图成品落点（相对项目根）" },
+            "cells": {
+              "type": "array",
+              "minItems": 1,
+              "description": "格位与视角；单图一条 single，多视图默认四条 tl/tr/bl/br",
+              "items": {
+                "type": "object",
+                "required": ["position", "view"],
+                "properties": {
+                  "position": {
+                    "type": "string",
+                    "enum": ["single", "tl", "tr", "bl", "br"],
+                    "description": "格位：单图或四宫格位置"
+                  },
+                  "view": { "type": "string", "description": "该格观看角度，如正面/侧面/背面/俯视/机构开合特写" },
+                  "must_see": { "type": "string", "description": "该格必须交代的结构/铭文/机构细节（可选）" }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+
+    "acceptance": {
+      "type": "object",
+      "required": ["criteria", "negative"],
+      "properties": {
+        "criteria": {
+          "type": "array",
+          "description": "逐项可核对的验收点，形制、材质、色彩、画风均须覆盖",
+          "items": { "type": "string" }
+        },
+        "negative": {
+          "type": "array",
+          "description": "针对该器物最易出错之处写出需要排除的失败模式",
+          "items": { "type": "string" }
+        }
+      }
+    }
+  }
+}

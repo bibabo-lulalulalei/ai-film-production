@@ -1,0 +1,44 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema#",
+  "$id": "https://ai-film-production/schemas/brightness.schema.json",
+  "title": "Brightness (world design · lighting order)",
+  "description": "04-world/<SCENE>/brightness.json：光的顺序，服从 [2] 冻结的风格定向，但不改光源客观方位。是光序唯一源；场景卡 lighting 与镜卡 lighting_baseline 以 light_id 引用此处，消灭『重抄两遍』的漂移。",
+  "type": "object",
+  "required": ["scene_id", "version", "frozen", "light_levels", "time_conditions"],
+  "properties": {
+    "scene_id": { "type": "string" },
+    "version": { "type": "string" },
+    "frozen": { "type": "boolean" },
+    "light_levels": {
+      "type": "array",
+      "minItems": 1,
+      "description": "逐光源的层级（与 geography.light_sources 的 id 对应）",
+      "items": {
+        "type": "object",
+        "required": ["light_id", "level"],
+        "properties": {
+          "light_id": { "type": "string", "description": "对应 geography light_sources.id" },
+          "level": { "type": "integer", "minimum": 0, "maximum": 10 },
+          "color_temperature": { "type": "string", "enum": ["warm", "neutral", "cool"] }
+        }
+      }
+    },
+    "time_conditions": {
+      "type": "array",
+      "minItems": 1,
+      "description": "逐『时辰/天气/季节』状态的光序",
+      "items": {
+        "type": "object",
+        "required": ["state", "key", "fill", "ambient"],
+        "properties": {
+          "state": { "type": "string", "description": "如 昼/夜/雨/黄昏" },
+          "key": { "type": "string", "description": "主光方向/性质（据 geography）" },
+          "fill": { "type": "string" },
+          "ambient": { "type": "string" },
+          "tint": { "type": "string", "description": "整体色调" },
+          "key_to_fill_ratio": { "type": "string" }
+        }
+      }
+    }
+  }
+}

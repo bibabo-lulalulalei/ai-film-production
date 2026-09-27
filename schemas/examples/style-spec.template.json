@@ -1,0 +1,65 @@
+{
+  "_comment": "空白画风规格起步模板：复制到 <root>/03-style/style-spec.json，按各槽括注填写具体可执行特征；填实并通过 --gate SS 前，烧样板与 [9b] 都会被拦下。字段契约见 ../style-spec.schema.json。",
+  "style_name": "",
+  "references": [],
+
+  "medium": {
+    "is": "",
+    "not": [""]
+  },
+
+  "shape_language": {
+    "tendency": "",
+    "silhouette": "",
+    "edges": ""
+  },
+
+  "proportions": {
+    "human": "",
+    "anatomy": ""
+  },
+
+  "materials": {
+    "overall": "",
+    "surfaces": [
+      { "part": "皮肤", "quality": "" },
+      { "part": "绸布", "quality": "" },
+      { "part": "木器", "quality": "" },
+      { "part": "陶瓷", "quality": "" },
+      { "part": "金属", "quality": "" }
+    ]
+  },
+
+  "look": {
+    "exposure": "",
+    "contrast": "",
+    "depth_of_field": "",
+    "highlights": "",
+    "grain": ""
+  },
+
+  "color_script": [
+    { "beat": "", "palette": [""], "function": "" }
+  ],
+
+  "line": {
+    "near": "",
+    "far": "",
+    "forbidden": ""
+  },
+
+  "motion": {
+    "dynamics": "",
+    "easing": "",
+    "camera": ""
+  },
+
+  "scale_chart": {
+    "heights": [
+      { "who": "", "cm": 0 }
+    ],
+    "anchor": ""
+  },
+
+  "negative": [""]
+}

@@ -1,0 +1,122 @@
+{
+  "asset_id": "CHAR-主角",
+  "kind": "character",
+
+  "identity": {
+    "name": "崔生",
+    "age": 30,
+    "sex": "男",
+    "station": "落魄儒生 / 寄人篱下",
+    "period_region": "元代扬州，汉族",
+    "health": "清瘦，略亏气血，无残疾"
+  },
+
+  "stature": {
+    "height_cm": 170,
+    "build": "瘦瘠，骨架细",
+    "shoulders": "窄而略削",
+    "waist_hips": "腰窄，臀平",
+    "posture": "含胸，坐时背微弓，站起才略挺",
+    "visual_weight": "孱弱、轻",
+    "relative_height": "与壮年男性同框矮半头，显单薄"
+  },
+
+  "proportions": {
+    "head_body_ratio": 6.5,
+    "face_ratio": {
+      "three_courts": "中庭略长，上庭:中庭:下庭 ≈ 1:1.1:1",
+      "five_eyes": "标准五眼，眼距≈一眼"
+    },
+    "shoulder_head_widths": 2.0,
+    "neck": "偏细、略长，筋线可见",
+    "leg_torso_ratio": "腰线略低，上下身 ≈ 1:1",
+    "limbs": "四肢偏细长，手指显长"
+  },
+
+  "head_face": {
+    "face_shape": "瘦长瓜子脸，下颌收",
+    "forehead": "额头饱满偏窄，有两道浅横纹",
+    "brows": "淡而平直、眉尾略垂，不浓",
+    "eyes": "细长眼、单眼皮，眼尾微垂，眼神温而带忧",
+    "nose": "鼻梁直、鼻头略尖，鼻翼窄",
+    "mouth": "唇薄、色淡，嘴角自然平直",
+    "cheeks": "面颊清瘦微陷，颧骨不显",
+    "chin": "下巴略尖",
+    "ears": "耳形贴，大小适中",
+    "wrinkles": "眼下两道浅细纹；眉心一竖浅纹（思虑时显）",
+    "distinguishing_marks": [
+      { "mark": "一颗小褐痣", "location": "左眉尾外侧约 1cm" }
+    ]
+  },
+
+  "hair": {
+    "color_hex": "#1E1C1A",
+    "hairline": "发际线整齐，略高",
+    "style": "全数束于头顶作小髻，以木簪固定；鬓发服帖",
+    "texture": "发丝直、偏软",
+    "ornaments": [
+      {
+        "item": "素木簪",
+        "worn_position": "横贯顶髻，簪脚水平穿出",
+        "description": "普通荆木削成，长约 12cm，无漆无纹，两端略收",
+        "color_hex": "#6A4E32"
+      }
+    ]
+  },
+
+  "skin": {
+    "color_hex": "#E3CDB0",
+    "texture": "细腻但偏干，书生少日晒；手指节处略粗",
+    "tone_note": "整体暖调，烛光下偏暖黄"
+  },
+
+  "hands_feet": {
+    "hands": "手偏大、指细长，骨节分明，指甲修剪齐整，无厚茧",
+    "feet": "足中等，着黑布鞋，裹白布袜"
+  },
+
+  "costume": [
+    { "garment": "中衣", "layer": "内", "material": "细棉布", "color_hex": "#EDE6D8",
+      "cut": "交领", "condition": "干净，略旧", "fastening": "右衽系带" },
+    { "garment": "交领布衫/袍", "layer": "外", "material": "粗织麻布，织理可见",
+      "color_hex": "#6E7068", "pattern": "无", "cut": "交领、宽袖收口",
+      "condition": "旧、褪色；左肘一处深色缝补补丁；下摆微磨",
+      "fastening": "腰系深褐布带 #5A4A38" },
+    { "garment": "裤", "layer": "中", "material": "棉布", "color_hex": "#4A463F",
+      "cut": "束口", "condition": "旧" },
+    { "garment": "布鞋", "layer": "外", "material": "布", "color_hex": "#26231F",
+      "cut": "浅口", "condition": "穿着、有磨损" }
+  ],
+
+  "performance": {
+    "default_expression": "平静中带一点忧思",
+    "expression_list": ["含笑(克制)", "垂泪", "失神"],
+    "habits": "紧张时手指收紧所握物、抿唇；思索时垂眼",
+    "stance_gait": "站姿含胸，步幅小而慢，显迟疑"
+  },
+
+  "consistency": {
+    "sheet_ref": "07-assets/characters/CHAR-主角/CHAR-主角_sheet.png",
+    "style_key_ref": "03-style/keys/warm_key.png"
+  },
+
+  "sheets": [
+    {
+      "sheet_id": "main",
+      "state": "默认定妆",
+      "target_path": "07-assets/characters/CHAR-主角/CHAR-主角_sheet.png"
+    }
+  ],
+
+  "acceptance": {
+    "criteria": [
+      "1×4 横向条四格是同一人（眉垂、单眼皮、尖颌、眉尾痣），正脸特写为中性表情、四格等高",
+      "头身比 6.5、含胸、窄肩一致；木簪在髻、左肘补丁与衫色一致",
+      "袍服为粗麻、无塑料光泽；色值符合 hex"
+    ],
+    "negative": [
+      "现代发型/烫染、塑料或绸缎般高光、多余首饰",
+      "魁梧体型、双眼皮、浓眉、艳丽色彩、戏剧化表情、文字水印"
+    ]
+  }
+}

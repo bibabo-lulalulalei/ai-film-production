@@ -1,0 +1,113 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema#",
+  "$id": "https://ai-film-production/schemas/gen-params.schema.json",
+  "title": "Shot Generation Parameters (gen.json)",
+  "description": "镜头生成参数与绑定。由 prompt-writer 填写，G07 闸核验。字段分区：选型与路由属于生产信息，写在这里而不是镜头卡。",
+  "type": "object",
+  "required": ["workflow", "mode", "model", "resolution", "aspect", "fps",
+               "duration_s",
+               "ref_images", "ref_audios", "negative"],
+  "properties": {
+    "workflow": { "type": "string", "description": "提交端点/工作流标识（H3 为 ComfyUI workflow id）；提交前核对其真实必填项与分辨率选项，见目标模型知识文档" },
+
+    "mode": {
+      "type": "string",
+      "description": "输入模式；合法值＝目标模型 profile.conditions 的键（H3：T2VA/I2VA/FL2VA/L2VA/Ref2VA）。判别规则：尾帧链子镜以父尾帧作首帧＝I2VA；首末帧都给＝FL2VA；仅末帧＝L2VA；无帧锚＝T2VA；多人多物全绑定＝Ref2VA"
+    },
+    "model": {
+      "type": "string",
+      "description": "本镜生成模型；未特别指定时继承 charter 的全片默认。允许值以目标模型 profile 的 gen_model_values 为准"
+    },
+    "resolution": {
+      "type": "string",
+      "description": "输出分辨率；允许值以目标模型 profile 的 resolutions 为准（口径＝当前接入封装实际开放：H3 经 AutoDL 当前仅 768P）"
+    },
+
+    "aspect": { "type": "string", "description": "画幅；H3 官方支持 21:9 / 16:9 / 4:3 / 1:1 / 3:4 / 9:16，与 charter 锁定一致" },
+    "fps": { "type": "integer", "minimum": 1 },
+    "duration_s": { "type": "number", "exclusiveMinimum": 0,
+                    "description": "须与镜头卡 duration_s 一致，并落在镜头卡 duration_tier 档位区间内（再与目标模型 profile 包络相交）" },
+    "use_range": {
+      "type": "array", "minItems": 2, "maxItems": 2,
+      "items": { "type": "number", "minimum": 0 },
+      "description": "使用参考素材的时间区间（秒）；整段使用给 [0, duration]"
+    },
+
+    "ref_images": {
+      "type": "array",
+      "description": "参考图槽。上限按物理 checkpoint：FL2VA（T2VA/I2VA/FL2VA/L2VA）0–2 张，Ref2VA ≤9 张；以目标模型 profile 为准。每张 sheet/grid 整图占一槽。标签语义见模板：<Picture N>=作具体帧/构图锚点的参考图，<Subject N>=可复用可见内容（人物、场景、道具、服装等都可以），不是角色专用。",
+      "items": {
+        "type": "object",
+        "required": ["slot", "label", "path", "role"],
+        "properties": {
+          "slot": { "type": "string", "description": "槽位名，如 ref_image_0" },
+          "label": {
+            "type": "string",
+            "pattern": "^<(Picture|Subject) [0-9]+>$",
+            "description": "正文同款模板标签；父尾帧在 I2VA 中即 <Picture 1>，不写 tail-frame"
+          },
+          "path": { "type": "string", "description": "图片相对项目根路径" },
+          "role": {
+            "type": "string",
+            "enum": ["first-frame", "last-frame", "style-key",
+                     "character-sheet", "prop-grid", "scene-grid"],
+            "description": "该图职责；与标签类别的映射以 profile tag_policy 为准"
+          },
+          "ref": { "type": "string", "description": "资产代号（可选）：asset_id；同一资产多 member 时由 role/path 区分" },
+          "cell": { "type": "string", "description": "role=scene-grid 必填：本镜使用的 cell_id，须与镜头卡 needs 的 scene 条 cell 一致" }
+        }
+      }
+    },
+    "ref_videos": {
+      "type": "array",
+      "description": "参考视频槽：仅 Ref2VA checkpoint（≤3 段，每段 2–15s，总时长 ≤15s）。所用 workflow 是否暴露该槽、槽位实际命名，提交前以服务端 options 为准。",
+      "items": {
+        "type": "object",
+        "required": ["slot", "label", "path", "role"],
+        "properties": {
+          "slot": { "type": "string", "description": "槽位名，如 ref_video_0" },
+          "label": { "type": "string", "pattern": "^<Video [0-9]+>$" },
+          "path": { "type": "string", "description": "视频相对项目根路径" },
+          "role": {
+            "type": "string",
+            "enum": ["edit-source", "continuation", "motion-reference"]
+          }
+        }
+      }
+    },
+    "ref_audios": {
+      "type": "array",
+      "description": "参考音频槽：开口镜绑该角色 tts wav（多镜复用同一文件）；数量上限以目标模型 profile 为准（H3=3）",
+      "items": {
+        "type": "object",
+        "required": ["slot", "label", "path", "role"],
+        "properties": {
+          "slot": { "type": "string" },
+          "label": { "type": "string", "pattern": "^<Audio [0-9]+>$" },
+          "path": { "type": "string" },
+          "role": {
+            "type": "string",
+            "enum": ["tts", "bgm-reference", "sfx"]
+          }
+        }
+      }
+    },
+
+    "negative": {
+      "type": "array", "minItems": 1,
+      "description": "负向清单：禁额外人物/乱码字幕/多余转场/水印/不符冻结的画风",
+      "items": { "type": "string" }
+    },
+
+    "provenance": {
+      "type": "object",
+      "description": "take 过审后回填，之前留空",
+      "properties": {
+        "model": { "type": ["string", "null"] },
+        "workflow": { "type": ["string", "null"] },
+        "seed": { "type": ["integer", "null"] },
+        "task_id": { "type": ["string", "null"] }
+      }
+    }
+  }
+}

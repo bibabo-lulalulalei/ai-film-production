@@ -1,0 +1,266 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema#",
+  "$id": "https://ai-film-production/schemas/model-profile.schema.json",
+  "title": "Model Profile（生成模型能力档案）",
+  "description": "每个生成模型一份 profile，位于 references/models/<model>/profile.json，是模型差异的唯一存放处：能力上限、物理 checkpoint、输入条件（mode）、提示词模板、标签策略、画风证据（style_evidence，自由描述词＋证据，非固定类型表）、当前接入封装信息。脚本不评判提示词正文措辞，但可从正文提取封闭结构 token（段首字段名、模板标签、首行锚点）做确定性比对，因此 profile 不收录写法词表（逐字英文以同目录官方模板为权威），只登记结构化契约。模型客观能力与流水线自有方法分开放：后者在 pipeline_requirements。接入新模型只需新增目录，不改脚本。",
+  "type": "object",
+  "required": ["model", "max_duration_s", "max_ref_images", "max_ref_audios",
+               "resolutions", "conditions"],
+  "properties": {
+    "model": { "type": "string", "description": "模型标识，与目录名对应（大小写不敏感）" },
+    "title": { "type": "string" },
+
+    "min_duration_s": { "type": "number", "exclusiveMinimum": 0, "description": "输出时长下限（H3=4 秒）" },
+    "max_duration_s": { "type": "number", "exclusiveMinimum": 0 },
+    "fps": { "type": "integer", "minimum": 1, "description": "成片帧率（H3=24）" },
+    "aspect_ratios": {
+      "type": "array", "items": { "type": "string" },
+      "description": "模型支持的输出宽高比（H3：21:9/16:9/4:3/1:1/3:4/9:16）"
+    },
+    "audio": {
+      "type": "object",
+      "description": "成片音频规格（H3：32kHz 立体声）",
+      "properties": {
+        "sample_rate_hz": { "type": "integer" },
+        "channels": { "type": "string" }
+      }
+    },
+    "default_short_edge_px": { "type": "integer", "description": "默认输出短边像素（H3=768）" },
+    "spoken_languages": { "type": "array", "items": { "type": "string" },
+                          "description": "稳定支持的台词语言" },
+
+    "resolutions": {
+      "type": "array", "items": { "type": "string" },
+      "description": "脚本闸据以枚举的输出分辨率；口径＝当前接入封装（deployment）实际开放的分辨率，不是模型原生全部能力。H3 经 AutoDL 接入当前仅 768P。"
+    },
+    "native_resolutions": {
+      "type": "array", "items": { "type": "string" },
+      "description": "模型原生支持的分辨率（H3：768P/2K），仅作事实登记"
+    },
+
+    "deployment": {
+      "type": "object",
+      "description": "当前接入封装（如 AutoDL ComfyUI）的事实信息：开放哪些分辨率、确认日期",
+      "properties": {
+        "name": { "type": "string" },
+        "resolutions": { "type": "array", "items": { "type": "string" } },
+        "note": { "type": "string" }
+      }
+    },
+
+    "checkpoints": {
+      "type": "object",
+      "description": "物理 checkpoint → 各模式与各模态输入细约束。键为 checkpoint 名（H3：FL2VA / Ref2VA）。脚本 G07 按 gen.mode 反查所属 checkpoint，卡图片细上限。",
+      "additionalProperties": {
+        "type": "object",
+        "required": ["modes"],
+        "properties": {
+          "modes": { "type": "array", "items": { "type": "string" } },
+          "images": {
+            "type": ["object", "null"],
+            "properties": {
+              "min": { "type": "integer", "minimum": 0 },
+              "max": { "type": "integer", "minimum": 0 }
+            }
+          },
+          "videos": {
+            "type": ["object", "null"],
+            "properties": {
+              "max": { "type": "integer" },
+              "per_clip_s": { "type": "array", "items": { "type": "number" }, "minItems": 2, "maxItems": 2 },
+              "total_s": { "type": "number" }
+            }
+          },
+          "audios": {
+            "type": ["object", "null"],
+            "properties": {
+              "max": { "type": "integer" },
+              "per_clip_s": { "type": "array", "items": { "type": "number" }, "minItems": 2, "maxItems": 2 },
+              "total_s": { "type": "number" },
+              "requires_visual_input": { "type": "boolean" }
+            }
+          },
+          "total_files_max": { "type": "integer" },
+          "note": { "type": "string" }
+        }
+      }
+    },
+
+    "max_ref_images": {
+      "type": "integer", "minimum": 0,
+      "description": "跨模式最宽松图片上限，用于设计阶段（G05，mode 尚未落定）粗检；细上限见 checkpoints。"
+    },
+    "max_ref_audios": {
+      "type": "integer", "minimum": 0,
+      "description": "跨模式最宽松音频上限，用于粗检；细约束见 checkpoints。"
+    },
+
+    "pipeline_requirements": {
+      "type": "object",
+      "description": "本流水线自有的方法约束（换模型也照此执行，非模型能力）：Style Key 垫图、开口镜绑 tts。脚本 G07 读取此处。",
+      "properties": {
+        "style_key_required": { "type": "boolean" },
+        "tts_required_for_lip_sync": { "type": "boolean" },
+        "note": { "type": "string" }
+      }
+    },
+
+    "gen_model_values": {
+      "type": "array", "items": { "type": "string" },
+      "description": "gen.json model 字段允许值；不填则不枚举。只放本模型自己的取值。"
+    },
+    "asset_image": {
+      "type": "object",
+      "description": "资产静帧生产所用的图像后端事实（区别于本视频模型本身）：后端、分辨率预设、提示词语言、参考图槽、可生成的拼版布局与画布预设。须有证据（确认日期），默认保守；项目相关常量在此登记，脚本与模板不再硬编码。",
+      "required": ["backend", "prompt_language", "confirmed_date"],
+      "properties": {
+        "backend": { "type": "string", "description": "图像后端名称（如 Qwen Image 2.1）" },
+        "kind": {
+          "type": "string",
+          "enum": ["local", "cloud"],
+          "description": "本地生卡 / 云端出图"
+        },
+        "resolution_preset": { "type": "string", "description": "分辨率预设（如 4MP）" },
+        "steps_default": { "type": "integer", "minimum": 1 },
+        "prompt_language": { "type": "string", "description": "生产词应使用的语言（如 zh）" },
+        "max_reference_images": {
+          "type": "integer",
+          "minimum": 0,
+          "description": "面板可传入的参考图槽数"
+        },
+        "sheet_capabilities": {
+          "type": "object",
+          "description": "该后端可一次生成的拼版能力",
+          "properties": {
+            "layouts": {
+              "type": "array",
+              "items": { "type": "string", "enum": ["single", "1x4", "2x2", "3x3"] }
+            },
+            "max_cells": { "type": "integer", "minimum": 1 }
+          }
+        },
+        "canvas_presets": {
+          "type": "array",
+          "items": { "type": "string" },
+          "description": "常用画幅预设（如 16:9 / 1:1 / 3:4 / 21:9）"
+        },
+        "confirmed_date": { "type": "string", "description": "事实确认日期（YYYY-MM-DD）" },
+        "note": { "type": "string" }
+      }
+    },
+    "knowledge_doc": { "type": "string", "description": "同目录下的模型知识文档（人读）" },
+
+    "tag_policy": {
+      "type": "object",
+      "description": "标签唯一命名空间：gen.json 各参考槽的 label 只能是官方模板标签；本结构定义 role 与标签类别的映射、槽位顺序。每张定妆 sheet / 道具宫格 / 场景宫格整图占一槽，不做同资产多图编号。",
+      "properties": {
+        "role_tag": {
+          "type": "object",
+          "description": "参考槽 role → 标签类别名（如 Picture/Subject/Video/Audio）",
+          "additionalProperties": { "type": "string" }
+        },
+        "slot_order": {
+          "type": "object",
+          "description": "checkpoint 名 → 图/视频槽类别优先级（audio 槽独立，不在此列）",
+          "additionalProperties": {
+            "type": "array",
+            "items": { "type": "string" }
+          }
+        },
+        "group_by_ref": {
+          "type": "boolean",
+          "description": "同一资产（ref 代号相同）的图槽是否共用一个 Subject 编号"
+        },
+        "note": { "type": "string" }
+      }
+    },
+
+    "style_evidence": {
+      "type": "object",
+      "description": "本模型对各种画风的证据库（不是固定类型表）：style_descriptor 为自由文本描述词＋别名，只登记有证据的条目，随真实探针/案例有机增长；评级与证据分写。[2] 风格定向据此产出跨模型矩阵。",
+      "required": ["records", "default"],
+      "properties": {
+        "records": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "required": ["style_descriptor", "level", "weight", "evidence"],
+            "properties": {
+              "style_descriptor": { "type": "string", "description": "自由文本风格描述（中英均可）" },
+              "aliases": { "type": "array", "items": { "type": "string" } },
+              "level": {
+                "type": "string",
+                "enum": ["native", "supported", "experimental", "unsupported"],
+                "description": "native=官方 skill/案例精确印证；supported=带日期成功实例；experimental=证据不足或有回弹；unsupported=明确失败"
+              },
+              "weight": { "type": "integer", "minimum": 0, "maximum": 3, "description": "level 的数值：native=3 supported=2 experimental=1 unsupported=0，供矩阵排序" },
+              "evidence": {
+                "type": "array",
+                "minItems": 1,
+                "items": {
+                  "type": "object",
+                  "required": ["kind", "date", "source"],
+                  "properties": {
+                    "kind": {
+                      "type": "string",
+                      "enum": ["official-skill", "official-case", "real-test", "community"],
+                      "description": "证据强度降序：官方 skill ＞ 官方案例 ＞ 实测探针 ＞ 社区"
+                    },
+                    "date": { "type": "string", "description": "证据日期（YYYY-MM 或 YYYY-MM-DD）" },
+                    "source": { "type": "string", "description": "出处：文档章节/URL/归档路径" },
+                    "detail": { "type": "string" }
+                  }
+                }
+              },
+              "mitigations": {
+                "type": "object",
+                "description": "采用该风格时的强制缓解手段（写入矩阵，冻结时快照）",
+                "properties": {
+                  "probe_required": { "type": "boolean" },
+                  "style_key_required": { "type": "boolean" },
+                  "preferred_modes": { "type": "array", "items": { "type": "string" } },
+                  "negative": { "type": "array", "items": { "type": "string" } }
+                }
+              }
+            }
+          }
+        },
+        "default": {
+          "type": "object",
+          "description": "证据库无命中的风格默认评级（通常 experimental：先探针，不臆测支持度）",
+          "required": ["level", "weight"],
+          "properties": {
+            "level": { "type": "string", "enum": ["native", "supported", "experimental", "unsupported"] },
+            "weight": { "type": "integer", "minimum": 0, "maximum": 3 },
+            "note": { "type": "string" }
+          }
+        }
+      }
+    },
+
+    "conditions": {
+      "type": "object",
+      "description": "输入条件（mode）→ 首行类型、模板与核心字段；键即 gen.json 的 mode 合法值，供写词岗与脚本共用",
+      "minProperties": 1,
+      "additionalProperties": {
+        "type": "object",
+        "required": ["template", "core_fields"],
+        "properties": {
+          "template": { "type": "string", "description": "同目录下的官方提示词模板文件（写法权威）" },
+          "first_line": {
+            "description": "首行的结构化类型：none＝无首行（直接核心字段）；{type:first_frame}＝Picture 1@0.00；{type:last_frame}＝Picture 1@duration；{type:first_last}＝Picture 1@0.00＋Picture 2@duration。逐字英文以模板为权威。",
+            "oneOf": [
+              { "type": "string" },
+              {
+                "type": "object",
+                "required": ["type"],
+                "properties": { "type": { "type": "string" } }
+              }
+            ]
+          },
+          "core_fields": { "type": "array", "items": { "type": "string" }, "minItems": 1 }
+        }
+      }
+    }
+  }
+}

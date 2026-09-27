@@ -1,0 +1,91 @@
+{
+  "asset_id": "SC-回廊",
+  "kind": "scene",
+
+  "identity": {
+    "name": "吴宅外院回廊",
+    "interior_exterior": "半室外（有顶的廊下，一侧敞开向庭院）",
+    "time_of_day": "夜（约亥时）",
+    "season": "秋",
+    "weather": "晴，夜凉",
+    "geography_ref": "04-world/SC-回廊/geography.json",
+    "serves_shots": ["S005", "S006"]
+  },
+
+  "layout": {
+    "floor_plan": "窄长廊道沿东墙南北延伸；西向一排木柱敞向庭院，柱间有矮栏；北端接小斋门",
+    "depth_layers": [
+      { "layer": "前景", "contents": "近处木柱与矮栏、廊下地面" },
+      { "layer": "中景", "contents": "纵深排列的柱列、廊顶木梁" },
+      { "layer": "后景", "contents": "北端小斋门、廊外夜色庭院" }
+    ],
+    "occlusion": "柱列逐层遮挡廊外庭院；人物行于柱间时被近柱半遮"
+  },
+
+  "architecture": [
+    { "element": "廊柱", "material": "木柱，石础", "color_hex": "#5A4A38",
+      "size_note": "柱距近，纵深排列显狭长", "condition": "旧，漆面暗" },
+    { "element": "廊顶/梁", "material": "木梁望板", "color_hex": "#332B24",
+      "condition": "烟熏，夜色中近黑" },
+    { "element": "地面", "material": "青砖顺铺", "color_hex": "#4A4239",
+      "condition": "旧，缝隙处泛潮" },
+    { "element": "矮栏", "material": "木栏", "color_hex": "#554636",
+      "condition": "旧，个别柱头磨损" }
+  ],
+
+  "furnishings": [],
+
+  "lighting": {
+    "practical_sources": [
+      { "type": "廊灯（纸罩油灯）", "position": "北端小斋门旁柱上",
+        "color_hex": "#C98A3B", "intensity": "弱，仅照近柱一小圈", "flame_count": 1 }
+    ],
+    "ambient": "庭院一侧透入极弱冷蓝天光；廊下整体压暗",
+    "key_to_fill_ratio": "唯一廊灯弱、辅光近无，比约 9:1",
+    "overall_exposure": "低调暗部，柱列隐入夜色，高光不过曝"
+  },
+
+  "palette": [
+    { "name": "木暗", "hex": "#5A4A38" },
+    { "name": "灯暖", "hex": "#C98A3B" },
+    { "name": "砖青", "hex": "#4A4239" },
+    { "name": "夜冷", "hex": "#8FA0AB" }
+  ],
+
+  "air": "夜静，廊下有薄雾贴地，庭院一侧凉气可见",
+  "terrain_vegetation": "廊外庭院青砖地，边角有秋草",
+
+  "grids": [
+    {
+      "grid_id": "g1",
+      "layout": "single",
+      "target_path": "07-assets/scenes/SC-回廊_g1.png",
+      "cells": [
+        {
+          "cell_id": "c1",
+          "position": "single",
+          "view": "沿廊道纵深的一点透视全景，眼高平视，柱列收向北端小斋门",
+          "must_see": "纵深柱列与矮栏、北端门旁一盏廊灯、廊外庭院冷色",
+          "serves_shots": ["S005", "S006"]
+        }
+      ]
+    }
+  ],
+
+  "figures": {
+    "contains_people": true,
+    "scale": "人物在纵深柱列间占画面约 1/4 高度，作尺度参照",
+    "who": ["CHAR-主角"]
+  },
+
+  "acceptance": {
+    "criteria": [
+      "一点透视柱列沿纵深收束，与平面一致；木/砖色值符合 hex",
+      "北端一盏暖廊灯为唯一实用光源，整体压暗，廊外庭院偏冷",
+      "S005 与 S006 共用同一构图：前者人物行于柱间，后者为空廊回顾"
+    ],
+    "negative": [
+      "多个光源、明亮曝光、日光、现代灯具构件、多余陈设、塑料质感、水印"
+    ]
+  }
+}

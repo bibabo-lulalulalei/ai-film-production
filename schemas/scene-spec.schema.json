@@ -1,0 +1,202 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema#",
+  "$id": "https://ai-film-production/schemas/scene-spec.schema.json",
+  "title": "Scene Asset Design Card",
+  "description": "每个场景唯一一份详细设计。字段不给候选值：依据剧情、时代考证、世界事实与目标画风自行判断填写；无法从项目得知的信息先查证或登记待补，不凭空选择。",
+  "type": "object",
+  "required": [
+    "asset_id", "kind", "identity", "layout", "architecture", "furnishings",
+    "lighting", "palette", "grids", "figures", "acceptance"
+  ],
+  "properties": {
+    "asset_id": { "type": "string", "description": "场景全局稳定标识，与镜头卡引用一致，一经引用不重排" },
+    "kind": { "type": "string", "description": "资产类别，固定填 scene；须与镜头卡 needs 中该 ID 的 kind 一致，供下游脚本路由" },
+
+    "identity": {
+      "type": "object",
+      "required": ["name", "interior_exterior", "time_of_day", "season",
+                   "weather", "geography_ref", "serves_shots"],
+      "properties": {
+        "name": { "type": "string", "description": "场景名称及其在剧情中的功能" },
+        "interior_exterior": { "type": "string", "description": "它属于室内或室外、或介于两者之间的过渡空间，按实际空间描述" },
+        "time_of_day": { "type": "string", "description": "具体时辰与天色，决定整体光环境" },
+        "season": { "type": "string", "description": "季节，影响陈设、植被、穿着与空气" },
+        "weather": { "type": "string", "description": "天气状况及其对光线、地面、空气的影响" },
+        "geography_ref": { "type": "string", "description": "对应的世界地理设计标识，空间方位以此为准" },
+        "serves_shots": {
+          "type": "array",
+          "description": "本场景承载的全部镜头标识",
+          "items": { "type": "string" }
+        }
+      }
+    },
+
+    "layout": {
+      "type": "object",
+      "required": ["floor_plan", "depth_layers", "occlusion"],
+      "properties": {
+        "floor_plan": { "type": "string", "description": "平面布局：占地形状，出入口、墙体、主要家具与光源的位置关系，与地理设计一致" },
+        "depth_layers": {
+          "type": "array",
+          "description": "沿视线方向的纵深层安排",
+          "items": {
+            "type": "object",
+            "required": ["layer", "contents"],
+            "properties": {
+              "layer": { "type": "string", "description": "该纵深层的位置" },
+              "contents": { "type": "string", "description": "此层包含的物体与遮挡" }
+            }
+          }
+        },
+        "occlusion": { "type": "string", "description": "物体间的遮挡关系及其在不同镜头下的变化" }
+      }
+    },
+
+    "architecture": {
+      "type": "array",
+      "minItems": 1,
+      "description": "把空间拆成建筑构件逐个列写",
+      "items": {
+        "type": "object",
+        "required": ["element", "material", "color_hex", "condition"],
+        "properties": {
+          "element": { "type": "string", "description": "构件名称，如墙、地、顶、梁、门、窗、台阶等" },
+          "material": { "type": "string", "description": "构件材质与做法" },
+          "color_hex": { "type": "string", "pattern": "^#[0-9A-Fa-f]{3,8}$", "description": "构件颜色，以 # 开头的色值表示" },
+          "size_note": { "type": "string", "description": "尺寸与比例印象，及其造成的空间感" },
+          "condition": { "type": "string", "description": "新旧、破损及其具体位置" },
+          "opening_view": { "type": "string", "description": "透过该构件的开口能看见的外部景象" }
+        }
+      }
+    },
+
+    "furnishings": {
+      "type": "array",
+      "description": "场景中所有陈设道具，逐个引用已存在的道具标识并写明位置；没有陈设则为空数组",
+      "items": {
+        "type": "object",
+        "required": ["prop_id", "position"],
+        "properties": {
+          "prop_id": { "type": "string", "description": "道具标识" },
+          "position": { "type": "string", "description": "它在场景中的摆放位置与朝向" },
+          "screen_share": { "type": "string", "description": "在画面中的占比" }
+        }
+      }
+    },
+
+    "lighting": {
+      "type": "object",
+      "required": ["practical_sources", "ambient", "key_to_fill_ratio",
+                   "overall_exposure"],
+      "properties": {
+        "practical_sources": {
+          "type": "array",
+          "description": "场景内所有实际光源，逐个写明位置与形态；没有则为空数组",
+          "items": {
+            "type": "object",
+            "required": ["type", "position", "color_hex", "intensity",
+                         "flame_count"],
+            "properties": {
+              "type": { "type": "string", "description": "光源类型" },
+              "position": { "type": "string", "description": "所在位置" },
+              "color_hex": { "type": "string", "pattern": "^#[0-9A-Fa-f]{3,8}$", "description": "光色，以 # 开头的色值表示" },
+              "intensity": { "type": "string", "description": "强弱与照射范围" },
+              "flame_count": { "type": "integer", "description": "焰心数量，按光源实际形态确定" }
+            }
+          }
+        },
+        "ambient": { "type": "string", "description": "环境光与天光来源、方向、颜色" },
+        "key_to_fill_ratio": { "type": "string", "description": "主辅光强弱关系" },
+        "overall_exposure": { "type": "string", "description": "整体明暗档位，描述高光与暗部各到什么程度" }
+      }
+    },
+
+    "palette": {
+      "type": "array",
+      "minItems": 1,
+      "description": "本场景用到的全部颜色，逐一命名并给色值",
+      "items": {
+        "type": "object",
+        "required": ["name", "hex"],
+        "properties": {
+          "name": { "type": "string", "description": "颜色名称" },
+          "hex": { "type": "string", "pattern": "^#[0-9A-Fa-f]{3,8}$", "description": "色值，以 # 开头" }
+        }
+      }
+    },
+
+    "air": { "type": "string", "description": "空气中雾、尘、烟、水汽的浓淡与形态" },
+    "terrain_vegetation": { "type": "string", "description": "地形、地貌与植被状况（室外场景）" },
+
+    "grids": {
+      "type": "array",
+      "minItems": 1,
+      "description": "按「地点×状态（时辰/天气/季节）」出的图包，一次生成保证是同一空间。镜头数≤3、或各镜共用同一视点时用单图（layout=single，恰一个 position=single 的 cell，多镜可共此格）；需要 4 个及以上不同视点才出宫格：2x2 优先，去重视图达 5–9 个用 3x3；再多拆成多张 grid，第二张起垫上一张（continuity_ref）。镜头↔cell 多对一、一镜一格：每个 serves_shots 镜头在全部 cells 中恰好出现一次。任一 cell 废则整张重烧，禁止补单格",
+      "items": {
+        "type": "object",
+        "required": ["grid_id", "layout", "target_path", "cells"],
+        "properties": {
+          "grid_id": { "type": "string", "pattern": "^g[0-9]+$", "description": "本场景内 grid 编号，如 g1" },
+          "layout": { "type": "string", "enum": ["single", "2x2", "3x3"], "description": "single＝单张场景图（≤3 镜或同一视点）；2x2＝四宫格；3x3＝九宫格" },
+          "target_path": { "type": "string", "description": "宫格整图成品落点（相对项目根）" },
+          "continuity_ref": { "type": "string", "description": "非首张 grid 必填：所垫上一张 grid 的 target_path" },
+          "cells": {
+            "type": "array",
+            "description": "格位与视图；cells 数与 position 集合须恰好匹配 layout（single 恰一条 position=single）",
+            "items": {
+              "type": "object",
+              "required": ["cell_id", "position", "view", "serves_shots"],
+              "properties": {
+                "cell_id": { "type": "string", "pattern": "^c[0-9]+$", "description": "本场景内全局唯一的格编号（跨 grid 不重号）" },
+                "position": {
+                  "type": "string",
+                  "enum": ["single", "tl", "tc", "tr", "ml", "c", "mr", "bl", "bc", "br"],
+                  "description": "single＝单图；其余为宫格格位"
+                },
+                "view": { "type": "string", "description": "该格观看角度与取景描述" },
+                "must_see": { "type": "string", "description": "该格必须看见的内容（可选）" },
+                "serves_shots": {
+                  "type": "array",
+                  "minItems": 1,
+                  "description": "绑定到本格的镜头（可多镜共用一格）",
+                  "items": { "type": "string" }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+
+    "figures": {
+      "type": "object",
+      "required": ["contains_people", "scale"],
+      "properties": {
+        "contains_people": { "type": "boolean", "description": "空镜中是否包含人物" },
+        "scale": { "type": "string", "description": "人物在画面中的占位与比例，作为尺度参照" },
+        "who": {
+          "type": "array",
+          "description": "若包含人物，写明角色标识",
+          "items": { "type": "string" }
+        }
+      }
+    },
+
+    "acceptance": {
+      "type": "object",
+      "required": ["criteria", "negative"],
+      "properties": {
+        "criteria": {
+          "type": "array",
+          "description": "逐视点可核对的验收点",
+          "items": { "type": "string" }
+        },
+        "negative": {
+          "type": "array",
+          "description": "针对该场景最易出错之处写出需要排除的失败模式，如穿帮构件、年代错位等",
+          "items": { "type": "string" }
+        }
+      }
+    }
+  }
+}

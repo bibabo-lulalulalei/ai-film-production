@@ -1,0 +1,278 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema#",
+  "$id": "https://ai-film-production/schemas/shot-card.schema.json",
+  "title": "Shot Card (single source of truth)",
+  "description": "全链唯一可被人手编辑的事实源。外观细节不写在这里，只引用资产标识，由资产设计卡承载。分镜岗填叙事区与逐秒骨架，摄影岗回填 cinematography 基线与每秒相机变化。",
+  "type": "object",
+  "required": ["shot_id", "scene_id", "seq", "status", "duration_s",
+               "duration_tier", "hook",
+               "narrative_job", "timeline", "cast", "needs", "spatial_anchors",
+               "lip_sync", "tail", "soul"],
+  "properties": {
+    "shot_id": { "type": "string", "description": "全局稳定编号，一经引用不重排" },
+    "scene_id": { "type": "string", "description": "所属场景标识" },
+    "seq": {
+      "type": "integer", "minimum": 0,
+      "description": "片序，仅用于排序，不是可重排编号"
+    },
+    "status": {
+      "type": "string",
+      "description": "卡的状态：设计阶段为 design，锁镜时翻转为 locked；脚本据这两个词识别状态"
+    },
+    "duration_s": {
+      "type": "number", "exclusiveMinimum": 0,
+      "description": "本镜时长（秒），须落在 duration_tier 档位区间内（区间再与目标模型 profile 包络相交）；一个节拍装不下就拆成两镜，并重新过 G04"
+    },
+    "duration_tier": {
+      "type": "string",
+      "enum": ["standard", "motion", "dialogue"],
+      "description": "节拍决定时长档位，由分镜初填、摄影确认：standard=默认叙事 8–12s；motion=连续运动/空镜 12–15s；dialogue=Ref2VA 多人对话按话轮切 4–10s"
+    },
+    "beat": { "type": "string", "description": "所属剧本节拍" },
+
+    "hook": {
+      "type": "object",
+      "required": ["hook_type"],
+      "description": "本镜的钩子类型，受控词表；用于全片钩子密度自检",
+      "properties": {
+        "hook_type": {
+          "type": "string",
+          "enum": ["setup", "visual-joke", "reversal", "reveal", "callback",
+                   "suspense", "tender", "chase", "expression-beat", "climax"],
+          "description": "setup＝铺垫，visual-joke＝视觉笑点，reversal＝反转，reveal＝揭示，callback＝呼应，suspense＝悬念，tender＝柔情，chase＝追逐，expression-beat＝表情节拍，climax＝高潮"
+        },
+        "note": { "type": "string", "description": "这个钩子具体指什么（一句话）"
+        }
+      }
+    },
+
+    "narrative_job": { "type": "string", "description": "本镜在叙事上必须完成什么" },
+
+    "timeline": {
+      "type": "array",
+      "minItems": 1,
+      "description": "逐秒指令：从 0s 到 duration_s 每秒一条、无时间空隙；允许 2.0/2.5 式子秒关键拍但不得留下缝隙。首项起幅、末项落幅。",
+      "items": {
+        "type": "object",
+        "required": ["t", "picture", "action", "camera", "sound", "handoff"],
+        "properties": {
+          "t": { "type": "number", "minimum": 0, "description": "秒" },
+          "picture": { "type": "string", "description": "此刻可见的具体画面，可直接拍摄" },
+          "action": {
+            "type": "string",
+            "description": "动作/姿态/表情；弹性拍须显式标注 squash（挤压）/stretch（拉伸）/anticipation（预备）/overshoot（过冲）/follow-through（随动）"
+          },
+          "camera": {
+            "type": "string",
+            "description": "该秒相机：push/pull/pan/tilt/truck/pedestal/arc/tracking/locked/orbit/handheld 等，可带 dutch:8° 斜角标记；相对全镜 cinematography 基线只写变化"
+          },
+          "sound": {
+            "type": "string",
+            "description": "此刻的声音（旁白/对白/SFX/呼吸）；刻意无声必须显式写 silent"
+          },
+          "handoff": {
+            "type": "string",
+            "description": "本秒锁给下一秒或下一镜的状态（姿态/道具/视线/情绪）"
+          },
+          "dialogue_ref": { "type": "string", "description": "对应剧本台词编号" }
+        }
+      }
+    },
+
+    "cast": {
+      "type": "array",
+      "description": "本镜出现的角色，一人一条，不复制定妆 sheet 的内容",
+      "items": {
+        "type": "object",
+        "required": ["character_id", "role_in_shot", "retention"],
+        "properties": {
+          "character_id": { "type": "string", "description": "角色标识" },
+          "role_in_shot": { "type": "string", "description": "在画面中的位置、占比、朝向" },
+          "retention": {
+            "type": "string",
+            "enum": ["fully_preserved", "partially_preserved",
+                     "attribute_transfer", "weak_reference"],
+            "description": "该角色参考在本镜如何被使用：完整保持/局部保持/属性转移/弱参考；weak 须在 role_in_shot 或备注中写清只借什么"
+          },
+          "required_expression": { "type": "string", "description": "本镜明确需要的神情，应能在人物设计卡 expression_list 中对应；无特殊要求可不填" },
+          "view": { "type": "string", "description": "本镜明确需要的观看角度；无特殊要求可不填" }
+        }
+      }
+    },
+
+    "needs": {
+      "type": "array",
+      "description": "本镜所需资产，保持精简。每条给标识、类别、预制落点；scene 条加 grid_id 与 cell（一镜一格；single 单图场景绑其唯一 single 格），character 条可选 sheet（缺省 main）。target_path 须与设计卡对应 member 的 target_path 一致；外观细节一律由资产设计卡承载",
+      "items": {
+        "type": "object",
+        "required": ["asset_id", "kind", "target_path"],
+        "properties": {
+          "asset_id": { "type": "string", "description": "资产全局标识，后写镜头复用已有标识，不另造" },
+          "kind": {
+            "type": "string",
+            "enum": ["character", "prop", "scene", "sound"],
+            "description": "资产类别，固定填 character / prop / scene / sound 之一，供下游脚本路由"
+          },
+          "target_path": { "type": "string", "description": "预制最终落点，相对项目根；须等于设计卡对应 member 的 target_path" },
+          "grid_id": { "type": "string", "description": "kind=scene 必填：所绑 grid 编号，如 g1（single 单图场景同样填）" },
+          "cell": { "type": "string", "description": "kind=scene 必填：一镜一格，绑定的 cell_id（single 时为其唯一格）" },
+          "sheet": { "type": "string", "description": "kind=character 可选：所用状态变体 sheet_id，缺省为 main" }
+        }
+      }
+    },
+
+    "spatial_anchors": {
+      "type": "object",
+      "description": "空间锚卡：跨镜连续性的机器依据，四个子字段均必填（无数组内容时给空数组）",
+      "required": ["fixed_landmarks", "cast_positions", "exited_characters",
+                   "lighting_baseline"],
+      "properties": {
+        "fixed_landmarks": {
+          "type": "array",
+          "description": "场景卡中的固定地标及其画面相位",
+          "items": {
+            "type": "object",
+            "required": ["name", "screen_position"],
+            "properties": {
+              "name": { "type": "string", "description": "地标名，须与场景设计卡一致（门框、桌、窗等）" },
+              "screen_position": {
+                "type": "string",
+                "description": "画面相对位置：left/center/right third、center bottom、top-left 等九宫格表述"
+              }
+            }
+          }
+        },
+        "cast_positions": {
+          "type": "array",
+          "description": "每个在镜角色的画面位置、朝向与初始姿态，须覆盖 cast 全部角色",
+          "items": {
+            "type": "object",
+            "required": ["character_id", "screen_position", "facing", "initial_pose"],
+            "properties": {
+              "character_id": { "type": "string" },
+              "screen_position": { "type": "string", "description": "如 left midground / right foreground / center" },
+              "facing": { "type": "string", "description": "朝向：camera / away / left / right / 具体角色" },
+              "initial_pose": { "type": "string", "description": "初始姿态：standing / seated / kneeling 等具体描述" }
+            }
+          }
+        },
+        "exited_characters": {
+          "type": "array",
+          "description": "上一镜在镜、本镜不在的角色：写明画外位置与原因；至少追踪一镜，连续两镜下场后才准移除",
+          "items": {
+            "type": "object",
+            "required": ["character_id", "offscreen", "reason"],
+            "properties": {
+              "character_id": { "type": "string" },
+              "offscreen": { "type": "string", "description": "画外位置，如 frame-left, at door-frame" },
+              "reason": { "type": "string", "description": "不在镜原因，如 exited after handing basket" },
+              "track_for_shots": { "type": "integer", "minimum": 1, "description": "继续追踪的镜数（默认 1）" }
+            }
+          }
+        },
+        "lighting_baseline": {
+          "type": "object",
+          "required": ["key", "fill", "rim", "modifier"],
+          "description": "从场景卡继承的光位基线，加本镜修饰",
+          "properties": {
+            "key": { "type": "string", "description": "主光方向与性质" },
+            "fill": { "type": "string", "description": "辅光方向与性质" },
+            "rim": { "type": "string", "description": "轮廓光；无写 none" },
+            "modifier": { "type": "string", "description": "本镜修饰，如 window-backlit silhouette；无写 none" }
+          }
+        }
+      }
+    },
+
+    "cinematography": {
+      "description": "分镜留空，摄影岗回填；G05 前填实，不留占位。作为全镜基线；逐秒变化写在 timeline[].camera。",
+      "type": "object",
+      "properties": {
+        "camera": {
+          "type": "object",
+          "required": ["world_facing", "position", "height", "angle"],
+          "properties": {
+            "world_facing": { "type": "string", "description": "摄影机世界朝向，沿用轴线设计" },
+            "position": { "type": "string", "description": "机位落点" },
+            "height": { "type": "string", "description": "机位高度" },
+            "angle": { "type": "string", "description": "水平角与俯仰" }
+          }
+        },
+        "lens": {
+          "type": "object",
+          "required": ["focal_length", "dof", "focus"],
+          "properties": {
+            "focal_length": { "type": "string", "description": "焦段具体值" },
+            "dof": { "type": "string", "description": "景深深浅及其表现目的" },
+            "focus": { "type": "string", "description": "焦点位置与跟随对象" }
+          }
+        },
+        "composition": { "type": "string", "description": "画幅分割、主体占比、前后景安排、视觉重心" },
+        "lighting": { "type": "string", "description": "主辅轮廓光的方位与强弱关系" },
+        "movement": {
+          "type": "object",
+          "required": ["type", "amplitude", "speed"],
+          "properties": {
+            "type": { "type": "string", "description": "运镜类型" },
+            "amplitude": { "type": "string", "description": "运动幅度" },
+            "speed": { "type": "string", "description": "运动速度" }
+          }
+        },
+        "continuity": { "type": "string", "description": "与相邻镜及尾帧链的构图、机位接续；地标/光位跨镜变化时须在此显式说明" }
+      }
+    },
+
+    "lip_sync": { "type": "boolean", "description": "本镜角色是否开口" },
+    "audio": {
+      "type": "object",
+      "description": "开口镜：绑定该角色的声音参考 wav，多镜复用同一文件",
+      "properties": {
+        "character_id": { "type": "string", "description": "开口角色标识" },
+        "tts_asset_id": { "type": "string", "description": "声音参考资产标识" },
+        "tts_path": { "type": "string", "description": "wav 路径；只核存在，不核时长" }
+      }
+    },
+
+    "tail": {
+      "type": "object",
+      "required": ["export", "tail_of", "target_path"],
+      "properties": {
+        "export": { "type": "boolean", "description": "是否导出尾帧" },
+        "tail_of": { "type": ["string", "null"], "description": "父镜标识；尾帧内容只能顺序长出" },
+        "chain": { "type": "string", "description": "所属尾帧链" },
+        "target_path": { "type": "string", "description": "尾帧预制落点" }
+      }
+    },
+
+    "soul": {
+      "type": "object",
+      "required": ["motif_marks"],
+      "properties": {
+        "motif_marks": {
+          "type": "array",
+          "description": "本镜承载的母题标记",
+          "items": {
+            "type": "object",
+            "required": ["motif_id", "occurrence"],
+            "properties": {
+              "motif_id": { "type": "string", "description": "母题标识" },
+              "occurrence": { "type": "integer", "minimum": 1, "description": "第几次出现" },
+              "note": { "type": "string", "description": "此次出现的意味，每次应有所变化" }
+            }
+          }
+        }
+      }
+    },
+
+    "provenance": {
+      "type": "object",
+      "description": "take 过审后回填，之前留空",
+      "properties": {
+        "model": { "type": ["string", "null"] },
+        "workflow": { "type": ["string", "null"] },
+        "seed": { "type": ["integer", "null"] },
+        "task_id": { "type": ["string", "null"] }
+      }
+    }
+  }
+}

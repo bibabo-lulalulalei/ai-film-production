@@ -1,0 +1,387 @@
+{
+  "model": "H3",
+  "title": "MiniMax H3（默认参考实现；当前经 AutoDL ComfyUI 封装接入）",
+  "min_duration_s": 4,
+  "max_duration_s": 15,
+  "fps": 24,
+  "aspect_ratios": [
+    "21:9",
+    "16:9",
+    "4:3",
+    "1:1",
+    "3:4",
+    "9:16"
+  ],
+  "audio": {
+    "sample_rate_hz": 32000,
+    "channels": "stereo"
+  },
+  "default_short_edge_px": 768,
+  "spoken_languages": [
+    "Arabic",
+    "Chinese",
+    "English",
+    "French",
+    "German",
+    "Italian",
+    "Japanese",
+    "Korean",
+    "Portuguese",
+    "Russian",
+    "Spanish"
+  ],
+  "gen_model_values": [
+    "H3"
+  ],
+  "resolutions": [
+    "768P"
+  ],
+  "native_resolutions": [
+    "768P",
+    "2K"
+  ],
+  "deployment": {
+    "name": "AutoDL ComfyUI",
+    "resolutions": [
+      "768P"
+    ],
+    "note": "2026-09-23 确认：当前封装仅开放 768P。模型原生支持 2K；官方 2K 由 H3-Regenerate 以 768p 成片加原始上下文回送重生成，详见 h3.md。脚本闸按 deployment.resolutions 枚举，解封 2K 后在此追加。"
+  },
+  "checkpoints": {
+    "FL2VA": {
+      "modes": [
+        "T2VA",
+        "I2VA",
+        "FL2VA",
+        "L2VA"
+      ],
+      "images": {
+        "min": 0,
+        "max": 2
+      },
+      "videos": null,
+      "audios": null,
+      "note": "0 帧锚=T2VA；1 帧锚=首帧(I2VA)或末帧(L2VA)；2 帧锚=首尾帧(FL2VA)。Style Key 不算帧锚（帧锚指决定首/末画面的参考图）。"
+    },
+    "Ref2VA": {
+      "modes": [
+        "Ref2VA"
+      ],
+      "images": {
+        "max": 9
+      },
+      "videos": {
+        "max": 3,
+        "per_clip_s": [
+          2,
+          15
+        ],
+        "total_s": 15
+      },
+      "audios": {
+        "max": 3,
+        "per_clip_s": [
+          2,
+          15
+        ],
+        "total_s": 15,
+        "requires_visual_input": true
+      },
+      "total_files_max": 12
+    }
+  },
+  "max_ref_images": 9,
+  "max_ref_audios": 3,
+  "pipeline_requirements": {
+    "style_key_required": true,
+    "tts_required_for_lip_sync": true,
+    "note": "非流水线的方法约束，任何模型都接收并执行：锁定 H3 风格；空场/定妆分别对应 Style Key 样板图；开口镜绑定该角色 tts wav。"
+  },
+  "style_evidence": {
+    "records": [
+      {
+        "style_descriptor": "live-action photoreal / cinematic（真人写实·电影感）",
+        "aliases": [
+          "写实电影感",
+          "photorealism",
+          "真人短剧"
+        ],
+        "level": "native",
+        "weight": 3,
+        "evidence": [
+          {
+            "kind": "official-skill",
+            "date": "2026-09",
+            "source": "MiniMax H3 官方开源仓库 skills/brand-promo-video-generator",
+            "detail": "官方品牌宣传片 skill，真人电影质感"
+          },
+          {
+            "kind": "official-skill",
+            "date": "2026-09",
+            "source": "MiniMax H3 官方开源仓库 skills/minimalist-product-ad-generator",
+            "detail": "官方极简产品广告 skill"
+          },
+          {
+            "kind": "official-case",
+            "date": "2026-09",
+            "source": "references/models/h3/base-en.txt",
+            "detail": "官方模板示例场景全部为真人写实"
+          }
+        ]
+      },
+      {
+        "style_descriptor": "3d cartoon animation（三维卡通动画）",
+        "aliases": [
+          "3D卡通",
+          "皮克斯风",
+          "CG cartoon"
+        ],
+        "level": "native",
+        "weight": 3,
+        "evidence": [
+          {
+            "kind": "official-skill",
+            "date": "2026-09",
+            "source": "MiniMax H3 官方开源仓库 skills/3d-animation-short-generator",
+            "detail": "官方三维动画短剧 skill"
+          }
+        ]
+      },
+      {
+        "style_descriptor": "paper collage explainer（纸片拼贴剪纸）",
+        "aliases": [
+          "拼贴剪纸",
+          "paper collage",
+          "纸片动画"
+        ],
+        "level": "native",
+        "weight": 3,
+        "evidence": [
+          {
+            "kind": "official-skill",
+            "date": "2026-09",
+            "source": "MiniMax H3 官方开源仓库 skills/paper-collage-explainer-generator",
+            "detail": "官方纸片拼贴解说 skill"
+          }
+        ]
+      },
+      {
+        "style_descriptor": "papercraft stop-motion（纸艺定格动画）",
+        "aliases": [
+          "纸艺定格",
+          "papercraft",
+          "立体纸雕定格"
+        ],
+        "level": "native",
+        "weight": 3,
+        "evidence": [
+          {
+            "kind": "official-skill",
+            "date": "2026-09",
+            "source": "MiniMax H3 官方开源仓库 skills/papercraft-stop-motion-explainer",
+            "detail": "官方纸艺定格解说 skill"
+          }
+        ]
+      },
+      {
+        "style_descriptor": "glowing rough hand-drawn + live-action fusion（蜡笔粉笔手绘实拍融合）",
+        "aliases": [
+          "手绘实拍融合",
+          "handdrawn-live",
+          "蜡笔发光手绘"
+        ],
+        "level": "native",
+        "weight": 3,
+        "evidence": [
+          {
+            "kind": "official-skill",
+            "date": "2026-09",
+            "source": "MiniMax H3 官方开源仓库 skills/handdrawn-live-video-generator",
+            "detail": "官方手绘发光动画＋实拍空间融合 skill；质感＝蜡笔/粉笔/彩铅，线条抖动"
+          }
+        ],
+        "mitigations": {
+          "negative": [
+            "3DCG",
+            "uniform vector lines",
+            "smooth neon",
+            "plush look"
+          ]
+        }
+      },
+      {
+        "style_descriptor": "beat-reactive on-screen typography（节奏型可读画面文字/歌词字）",
+        "aliases": [
+          "歌词字",
+          "lyric typography",
+          "画面可读文字"
+        ],
+        "level": "native",
+        "weight": 3,
+        "evidence": [
+          {
+            "kind": "official-skill",
+            "date": "2026-09",
+            "source": "MiniMax H3 官方开源仓库 skills/music-video-subtitle-generator",
+            "detail": "官方 MV 字幕 skill：节拍反应的空间字体设计；h3.md §8 亦登记简短可读文字为 H3 强项"
+          }
+        ]
+      },
+      {
+        "style_descriptor": "Chinese ink wash / 水墨写意",
+        "aliases": [
+          "上美影水墨",
+          "freehand ink",
+          "淡墨"
+        ],
+        "level": "experimental",
+        "weight": 1,
+        "evidence": [
+          {
+            "kind": "real-test",
+            "date": "2026-09",
+            "source": "references/models/h3/h3.md §8",
+            "detail": "真实翻车：风格锚缺失时回弹为真人写实片"
+          }
+        ],
+        "mitigations": {
+          "probe_required": true,
+          "style_key_required": true,
+          "preferred_modes": [
+            "Ref2VA"
+          ],
+          "negative": [
+            "photorealism",
+            "live-action",
+            "CG",
+            "lens"
+          ]
+        }
+      }
+    ],
+    "default": {
+      "level": "experimental",
+      "weight": 1,
+      "note": "证据库无命中的风格默认实验性：在 [2] 当场定向调研/探针，结论带链接与日期，不臆测支持度。"
+    }
+  },
+  "asset_image": {
+    "backend": "Ark Seedream",
+    "kind": "api",
+    "base_url": "https://ark.cn-beijing.volces.com/api/v3/images/generations",
+    "model_id": "doubao-seedream-5-0-pro-260628",
+    "size": "1K",
+    "response_format": "b64_json",
+    "output_format": "png",
+    "watermark": false,
+    "timeout_s": 300,
+    "prompt_language": "zh",
+    "max_reference_images": 10,
+    "sheet_capabilities": {
+      "layouts": [
+        "single",
+        "1x4",
+        "2x2",
+        "3x3"
+      ],
+      "max_cells": 9
+    },
+    "canvas_presets": [
+      "16:9",
+      "1:1",
+      "3:4",
+      "21:9"
+    ],
+    "confirmed_date": "2026-09-26",
+    "note": "火山方舟图片生成 API 直连（依据 2026-09《图片生成 API》文档）；size 档位 1K，宽高比按 API 方式 1 由生产提示词自然语言描述、模型自定；无水印；凭证 ARK_API_KEY。"
+  },
+  "knowledge_doc": "h3.md",
+  "tag_policy": {
+    "role_tag": {
+      "first-frame": "Picture",
+      "last-frame": "Picture",
+      "style-key": "Subject",
+      "character-sheet": "Subject",
+      "prop-grid": "Subject",
+      "scene-grid": "Subject",
+      "edit-source": "Video",
+      "continuation": "Video",
+      "motion-reference": "Video",
+      "tts": "Audio",
+      "bgm-reference": "Audio",
+      "sfx": "Audio"
+    },
+    "slot_order": {
+      "FL2VA": [
+        "parent-tail",
+        "style-key",
+        "frame-anchor",
+        "subject"
+      ],
+      "Ref2VA": [
+        "style-key",
+        "frame-anchor",
+        "subject",
+        "video"
+      ]
+    },
+    "group_by_ref": true,
+    "note": "每张定妆 sheet/道具宫格/场景宫格整图占一槽；parent-tail 存在时插队 ref_image_0；Picture/Subject/Video/Audio 四类编号互相独立、各自从 1 连续；Audio 槽（ref_audio_*）独立编号。"
+  },
+  "conditions": {
+    "T2VA": {
+      "template": "base-en.txt",
+      "first_line": "none",
+      "core_fields": [
+        "integrated_multimodal_description",
+        "overall_soundscape",
+        "non_diegetic_music"
+      ]
+    },
+    "I2VA": {
+      "template": "base-en.txt",
+      "first_line": {
+        "type": "first_frame"
+      },
+      "core_fields": [
+        "integrated_multimodal_description",
+        "overall_soundscape",
+        "non_diegetic_music"
+      ]
+    },
+    "FL2VA": {
+      "template": "base-en.txt",
+      "first_line": {
+        "type": "first_last"
+      },
+      "core_fields": [
+        "integrated_multimodal_description",
+        "overall_soundscape",
+        "non_diegetic_music"
+      ]
+    },
+    "L2VA": {
+      "template": "base-en.txt",
+      "first_line": {
+        "type": "last_frame"
+      },
+      "core_fields": [
+        "integrated_multimodal_description",
+        "overall_soundscape",
+        "non_diegetic_music"
+      ]
+    },
+    "Ref2VA": {
+      "template": "ref2va-en.txt",
+      "first_line": "none",
+      "core_fields": [
+        "subject_definitions",
+        "summary",
+        "retention_analysis",
+        "detailed_description",
+        "overall_soundscape",
+        "non_diegetic_music"
+      ]
+    }
+  }
+}

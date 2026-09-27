@@ -1,0 +1,14 @@
+{
+  "$comment": "放在 03-style/style-checks.json。只列机器可客观核对的风格规则；味道/气质不要写这里。lint_cards --gate A / B 会读取本文件。",
+  "forbidden_terms": ["photorealistic", "cinematic", "live action", "product shot"],
+  "color_anchors": [
+    { "name": "纸底", "hex": "#E8E0CC" },
+    { "name": "夜青", "hex": "#2E3A45" },
+    { "name": "灯暖", "hex": "#C98A3B" }
+  ],
+  "required_key_in_generation": true,
+  "notes": [
+    "每个镜头的 gen 必须引用 03-style/keys/ 下样板图（G07 机查）。",
+    "forbidden_terms 出现在资产设计卡 / cinematography 即 G05 FAIL。"
+  ]
+}
